@@ -699,6 +699,14 @@ window.FD_LIVE_READY.then(function(){
   ];
   var KIDS_RE = /child parent couns/i;
   function isKids(t){ return KIDS_RE.test((t.payee || '') + ' ' + (t.description || '')); }
+  window.fdKidsBank = function(){
+    var byMonth = {};
+    bankTxs.forEach(function(t){ if (t.amount < 0 && isKids(t)) { var k = t.date.slice(0,7); byMonth[k] = (byMonth[k] || 0) + (-t.amount); } });
+    var nowK = mkey(now.getFullYear(), now.getMonth());
+    var keys = Object.keys(byMonth);
+    var total = keys.reduce(function(s,k){ return s + byMonth[k]; }, 0);
+    return { month: byMonth[nowK] || 0, avg3: total / 3 };
+  };
   function autoCat(tx){
     if (catOv[tx.id]) return migCat(catOv[tx.id]);
     var key = (tx.payee || tx.description || '').toLowerCase().trim();
@@ -2361,7 +2369,8 @@ document.addEventListener('DOMContentLoaded', function(){
     var line5  = document.getElementById('line5-check').checked;
     var hiKids = Math.max(0, 1137.89 - hiSelf);
     var phone  = 148.37 + (line5 ? 6.51 : 0);
-    var total  = 196.52 + 503.69 + sfPay + phone + hiKids;
+    var couns  = (window.fdKidsBank ? window.fdKidsBank().avg3 : 0);
+    var total  = 196.52 + 503.69 + sfPay + phone + hiKids + couns;
     document.getElementById('hi-kids-val').textContent   = fmt(hiKids);
     document.getElementById('hi-total-val').textContent  = fmt(hiKids);
     document.getElementById('sf-total-val').textContent  = fmt(sfPay);
@@ -2377,6 +2386,7 @@ document.addEventListener('DOMContentLoaded', function(){
         {l:"Reagan's Car Payment",   v:'$503.69',      h:'Ed Federal Credit Union'},
         {l:'Cell Phones (3 lines)',   v:fmt(phone),     h:'Line charges June 2026'},
         {l:'Health Insurance (kids)', v:fmt(hiKids),   h:'Family minus Self-Only'},
+        {l:'Counseling copays',       v:fmt(couns),    h:'Kids-tagged bank charges, 3-mo avg'},
       ];
       cards.innerHTML = items.map(function(c){
         return '<div class="card"><div class="label">'+c.l+'</div>'+
