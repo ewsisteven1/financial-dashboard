@@ -119,6 +119,7 @@
     <div class="tab" data-tab="subs">Subscriptions</div>
     <div class="tab" data-tab="business">Business</div>
     <div class="tab" data-tab="analytics">&#128202; Analytics</div>
+        <div class="tab" data-tab="kids">&#128118; Kids</div>
   </div>
 
   <!-- OVERVIEW -->
@@ -2011,6 +2012,295 @@ document.addEventListener('DOMContentLoaded', function(){
 })(); // end analytics module
 </script>
 
+
+  <!-- ═══════════════════════════════════ KIDS EXPENSES VIEW ═══════════════ -->
+  <div class="view" id="view-kids" style="display:none">
+
+    <div class="cards" id="kids-cards" style="margin-bottom:16px"></div>
+
+    <!-- Car Insurance -->
+    <div class="panel">
+      <h2 style="color:var(--accent)">&#128663; Car Insurance &mdash; Geico (monthly)</h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 12px">6-month premium &divide; 6. Steve&rsquo;s Tesla excluded from kids&rsquo; total.</p>
+      <table>
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:6px 8px;color:var(--muted);font-weight:500">Vehicle</th>
+            <th style="padding:6px 8px;color:var(--muted);font-weight:500">Driver</th>
+            <th style="padding:6px 8px;text-align:right;color:var(--muted);font-weight:500">6-Mo Premium</th>
+            <th style="padding:6px 8px;text-align:right;color:var(--muted);font-weight:500">Monthly</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+            <td style="padding:8px">2023 Tesla Model Y</td>
+            <td style="padding:8px">Steve &#10003;</td>
+            <td style="padding:8px;text-align:right">$1,053.60</td>
+            <td style="padding:8px;text-align:right">$175.60</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--accent-soft)">
+            <td style="padding:8px;font-weight:600">2024 Ford Bronco</td>
+            <td style="padding:8px;color:var(--accent);font-weight:500">Reagan &#128105;</td>
+            <td style="padding:8px;text-align:right">$592.30</td>
+            <td style="padding:8px;text-align:right;color:var(--accent);font-weight:700">$98.72</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--accent-soft)">
+            <td style="padding:8px;font-weight:600">2020 Hyundai Santa Fe</td>
+            <td style="padding:8px;color:var(--accent);font-weight:500">Kid &#128105;</td>
+            <td style="padding:8px;text-align:right">$586.80</td>
+            <td style="padding:8px;text-align:right;color:var(--accent);font-weight:700">$97.80</td>
+          </tr>
+          <tr style="font-weight:700">
+            <td style="padding:8px" colspan="2">Kids&rsquo; Insurance Total</td>
+            <td style="padding:8px;text-align:right">$1,179.10</td>
+            <td style="padding:8px;text-align:right;color:var(--accent)">$196.52 / mo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Car Payments -->
+    <div class="panel">
+      <h2 style="color:var(--accent)">&#128179; Car Payments</h2>
+      <table>
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:6px 8px;color:var(--muted);font-weight:500">Vehicle</th>
+            <th style="padding:6px 8px;color:var(--muted);font-weight:500">Lender</th>
+            <th style="padding:6px 8px;color:var(--muted);font-weight:500">Driver</th>
+            <th style="padding:6px 8px;text-align:right;color:var(--muted);font-weight:500">Monthly</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);background:var(--accent-soft)">
+            <td style="padding:8px;font-weight:600">2024 Ford Bronco</td>
+            <td style="padding:8px;color:var(--muted)">Educational Federal Credit Union</td>
+            <td style="padding:8px;color:var(--accent);font-weight:500">Reagan &#128105;</td>
+            <td style="padding:8px;text-align:right;color:var(--accent);font-weight:700">$503.69</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px;font-weight:600">2020 Hyundai Santa Fe</td>
+            <td style="padding:8px;color:var(--muted)">Unknown &mdash; enter payment:</td>
+            <td style="padding:8px;color:var(--muted)">Kid &#128105;</td>
+            <td style="padding:8px;text-align:right">
+              <input id="sf-payment" type="number" min="0" max="2000" step="1" placeholder="0"
+                style="width:80px;padding:4px 6px;border:1px solid var(--border);border-radius:5px;
+                       background:transparent;color:var(--text);font-size:13px;text-align:right"
+                oninput="kidsCalc()">
+            </td>
+          </tr>
+          <tr style="color:var(--muted)">
+            <td style="padding:8px">2023 Tesla Model Y</td>
+            <td style="padding:8px">Chase Auto Finance</td>
+            <td style="padding:8px">Steve &#10003;</td>
+            <td style="padding:8px;text-align:right">$762.44</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- T-Mobile -->
+    <div class="panel">
+      <h2 style="color:var(--accent)">&#128242; T-Mobile &mdash; June 2026 Bill ($551.44 total)</h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 14px">
+        Shared account charges (base plan, Netflix, Apple TV, Paramount+) = $209.93 shown separately.
+        Reagan&rsquo;s line includes a one-time $20.83 Jamaica roaming charge this month; normal month &asymp; $6.51.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--muted)">Steve&rsquo;s Devices</div>
+          <table>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(240) 375-9766</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">iPhone 16 Pro Max</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$118.43</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(410) 940-4181</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">Apple Watch</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$15.00</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(410) 212-2988</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">iPad A16</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$53.20</td>
+            </tr>
+            <tr style="font-weight:700">
+              <td style="padding:6px 4px;font-size:12px" colspan="2">Steve&rsquo;s Subtotal</td>
+              <td style="padding:6px 4px;text-align:right;font-size:13px">$186.63</td>
+            </tr>
+          </table>
+        </div>
+        <div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:14px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:10px;color:var(--accent)">Kids&rsquo; Lines (3 lines)</div>
+          <table>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(443) 699-2200</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">Reagan*</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$27.34</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(667) 225-7657</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">iPhone 15</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$105.35</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:5px 4px;font-size:12px">(240) 695-2652</td>
+              <td style="padding:5px 4px;font-size:11px;color:var(--muted)">iPhone 17 (free promo)</td>
+              <td style="padding:5px 4px;text-align:right;font-size:12px">$15.68</td>
+            </tr>
+            <tr style="font-weight:700">
+              <td style="padding:6px 4px;font-size:12px" colspan="2">Kids&rsquo; Subtotal</td>
+              <td style="padding:6px 4px;text-align:right;font-size:13px;color:var(--accent)">$148.37</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div style="background:var(--amber-soft);border:1px solid var(--amber);border-radius:7px;padding:9px 13px;margin-bottom:12px;font-size:12px">
+        <strong>&#9888; (240) 695-7145</strong> &mdash; $6.51/mo &mdash; 5th voice line: 0.00 GB data but high call volume. Whose line is this?
+        <label style="font-weight:500;margin-left:8px">Add to kids total:
+          <input type="checkbox" id="line5-check" onchange="kidsCalc()" style="margin-left:4px;vertical-align:middle">
+        </label>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 13px;font-size:12px">
+        <strong>Shared account charges: $209.93/mo</strong> &mdash; Experience Beyond base plan &bull; Netflix Premium ($20) &bull; Apple TV ($3) &bull; Paramount+ ($14) &bull; Taxes &amp; fees
+        <div style="margin-top:6px;color:var(--muted)">
+          Kids&rsquo; proportional share (3 of 5 lines &asymp; 60%): <strong style="color:var(--text)">$125.96/mo</strong> &mdash; not included in the grand total above (hard to split fairly)
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Insurance -->
+    <div class="panel">
+      <h2 style="color:var(--accent)">&#127973; Health Insurance &mdash; GEHA Federal</h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 14px">
+        Kids&rsquo; cost = what you pay for the Family plan minus what you&rsquo;d pay for Self-Only.
+        Enter your Self-Only monthly premium to get the exact figure.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+        <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Family Plan (you pay)</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)">$1,000</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">GEHA Federal / mo</div>
+        </div>
+        <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Self-Only Plan (your estimate)</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px">
+            <span style="font-weight:600;font-size:16px">$</span>
+            <input id="hi-self" type="number" value="500" min="0" max="2000" step="10"
+              style="width:80px;padding:5px 6px;border:1px solid var(--accent);border-radius:6px;
+                     background:transparent;color:var(--text);font-size:18px;font-weight:700;text-align:right"
+              oninput="kidsCalc()">
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">Edit to your actual rate</div>
+        </div>
+        <div style="text-align:center;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:16px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Kids&rsquo; Health Cost</div>
+          <div id="hi-kids-val" style="font-size:22px;font-weight:700;color:var(--accent)">$500</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">Family &minus; Self-Only / mo</div>
+        </div>
+      </div>
+      <p style="margin:10px 0 0;font-size:11px;color:var(--muted)">
+        Tip: Find your rate at OPM.gov &rarr; Plan comparison, or check your SF-50 / benefits statement for the biweekly employee contribution &times; 26 &divide; 12.
+      </p>
+    </div>
+
+    <!-- Grand Total -->
+    <div class="panel" style="border-color:var(--accent);background:var(--accent-soft)">
+      <h2 style="color:var(--accent)">&#128200; Monthly Total &mdash; What You Pay for the Kids</h2>
+      <table id="kids-total-tbl" style="font-size:14px">
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px 6px">&#128663; Car Insurance (Bronco + Santa Fe)</td>
+            <td style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$196.52</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px 6px">&#128179; Reagan&apos;s Car Payment (Ford Bronco)</td>
+            <td style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$503.69</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)" id="sf-total-row">
+            <td style="padding:8px 6px">&#128179; Santa Fe Payment (enter above)</td>
+            <td id="sf-total-val" style="padding:8px 6px;text-align:right;color:var(--muted)">$0.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px 6px">&#128242; Cell Phones (3 kids&apos; lines)</td>
+            <td id="phone-total-val" style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$148.37</td>
+          </tr>
+          <tr id="line5-row" style="border-bottom:1px solid var(--border);display:none">
+            <td style="padding:8px 6px">&#128242; Unidentified Line (695-7145)</td>
+            <td style="padding:8px 6px;text-align:right;color:var(--accent)">$6.51</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px 6px">&#127973; Health Insurance (kids&apos; portion)</td>
+            <td id="hi-total-val" style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$500.00</td>
+          </tr>
+          <tr style="font-size:16px;font-weight:700;border-top:2px solid var(--accent)">
+            <td style="padding:10px 6px">&#128181; Total Monthly Kids Cost</td>
+            <td id="kids-grand-val" style="padding:10px 6px;text-align:right;color:var(--accent)">$1,348.58</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <!-- END KIDS EXPENSES ════════════════════════════════════════════════════ -->
+
+<script>
+(function(){
+  var LS_KEY = 'fd_kids_settings';
+  function fmt(n){
+    return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function kidsCalc(){
+    var hiSelf = parseFloat(document.getElementById('hi-self').value) || 0;
+    var sfPay  = parseFloat(document.getElementById('sf-payment').value) || 0;
+    var line5  = document.getElementById('line5-check').checked;
+    var hiKids = Math.max(0, 1000 - hiSelf);
+    var phone  = 148.37 + (line5 ? 6.51 : 0);
+    var total  = 196.52 + 503.69 + sfPay + phone + hiKids;
+    document.getElementById('hi-kids-val').textContent   = fmt(hiKids);
+    document.getElementById('hi-total-val').textContent  = fmt(hiKids);
+    document.getElementById('sf-total-val').textContent  = fmt(sfPay);
+    document.getElementById('phone-total-val').textContent = fmt(phone);
+    document.getElementById('kids-grand-val').textContent  = fmt(total);
+    var r = document.getElementById('line5-row');
+    if(r) r.style.display = line5 ? '' : 'none';
+    var cards = document.getElementById('kids-cards');
+    if(cards){
+      var items = [
+        {l:'Total Monthly Kids Cost', v:fmt(total),    h:'All categories combined', accent:true},
+        {l:'Car Insurance (kids)',    v:'$196.52',      h:'Bronco + Santa Fe / mo'},
+        {l:"Reagan's Car Payment",   v:'$503.69',      h:'Ed Federal Credit Union'},
+        {l:'Cell Phones (3 lines)',   v:fmt(phone),     h:'Line charges June 2026'},
+        {l:'Health Insurance (kids)', v:fmt(hiKids),   h:'Family minus Self-Only'},
+      ];
+      cards.innerHTML = items.map(function(c){
+        return '<div class="card"><div class="label">'+c.l+'</div>'+
+          '<div class="value" style="'+(c.accent?'color:var(--accent)':'')+
+          '">'+c.v+'</div><div class="hint">'+c.h+'</div></div>';
+      }).join('');
+    }
+    try{ localStorage.setItem(LS_KEY, JSON.stringify({hiSelf:hiSelf,sfPay:sfPay,line5:line5})); }catch(e){}
+  }
+  window.kidsCalc = kidsCalc;
+  function kidsInit(){
+    try{
+      var s = JSON.parse(localStorage.getItem(LS_KEY)||'null');
+      if(s){
+        if(s.hiSelf!==undefined) document.getElementById('hi-self').value = s.hiSelf;
+        if(s.sfPay!==undefined)  document.getElementById('sf-payment').value = s.sfPay;
+        if(s.line5!==undefined)  document.getElementById('line5-check').checked = s.line5;
+      }
+    }catch(e){}
+    kidsCalc();
+  }
+  if(window.FD_LIVE_READY && typeof window.FD_LIVE_READY.then==='function'){
+    window.FD_LIVE_READY.then(kidsInit);
+  } else {
+    document.addEventListener('DOMContentLoaded', kidsInit);
+  }
+})();
+</script>
 
 </div>
 <button id="fd-signout" onclick="fdSignOut()" style="display:none;position:fixed;bottom:20px;right:20px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;z-index:9998">Sign out</button>
