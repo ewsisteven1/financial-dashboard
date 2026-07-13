@@ -2180,28 +2180,28 @@ document.addEventListener('DOMContentLoaded', function(){
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
         <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px">
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Family Plan (you pay)</div>
-          <div style="font-size:22px;font-weight:700;color:var(--accent)">$1,000</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">GEHA Federal / mo</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)">$1,137.89</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">GEHA High Plan &bull; $525.18 biweekly</div>
         </div>
         <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Self-Only Plan (your estimate)</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Elevate Self-Only &bull; $228.85 biweekly</div>
           <div style="display:flex;align-items:center;justify-content:center;gap:4px">
             <span style="font-weight:600;font-size:16px">$</span>
-            <input id="hi-self" type="number" value="500" min="0" max="2000" step="10"
+            <input id="hi-self" type="number" value="495.85" min="0" max="2000" step="1"
               style="width:80px;padding:5px 6px;border:1px solid var(--accent);border-radius:6px;
                      background:transparent;color:var(--text);font-size:18px;font-weight:700;text-align:right"
               oninput="kidsCalc()">
           </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:6px">Edit to your actual rate</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">GEHA Elevate &mdash; $228.85/biweekly</div>
         </div>
         <div style="text-align:center;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:16px">
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Kids&rsquo; Health Cost</div>
-          <div id="hi-kids-val" style="font-size:22px;font-weight:700;color:var(--accent)">$500</div>
+          <div id="hi-kids-val" style="font-size:22px;font-weight:700;color:var(--accent)">$642.04</div>
           <div style="font-size:11px;color:var(--muted);margin-top:4px">Family &minus; Self-Only / mo</div>
         </div>
       </div>
       <p style="margin:10px 0 0;font-size:11px;color:var(--muted)">
-        Tip: Find your rate at OPM.gov &rarr; Plan comparison, or check your SF-50 / benefits statement for the biweekly employee contribution &times; 26 &divide; 12.
+        Rates confirmed: High Self+Family $525.18 biweekly &bull; Elevate Self-Only $228.85 biweekly. Update the Self-Only field if your enrollment changes.
       </p>
     </div>
 
@@ -2232,11 +2232,11 @@ document.addEventListener('DOMContentLoaded', function(){
           </tr>
           <tr style="border-bottom:1px solid var(--border)">
             <td style="padding:8px 6px">&#127973; Health Insurance (kids&apos; portion)</td>
-            <td id="hi-total-val" style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$500.00</td>
+            <td id="hi-total-val" style="padding:8px 6px;text-align:right;font-weight:600;color:var(--accent)">$642.04</td>
           </tr>
           <tr style="font-size:16px;font-weight:700;border-top:2px solid var(--accent)">
             <td style="padding:10px 6px">&#128181; Total Monthly Kids Cost</td>
-            <td id="kids-grand-val" style="padding:10px 6px;text-align:right;color:var(--accent)">$1,348.58</td>
+            <td id="kids-grand-val" style="padding:10px 6px;text-align:right;color:var(--accent)">$1,490.62</td>
           </tr>
         </tbody>
       </table>
@@ -2255,7 +2255,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var hiSelf = parseFloat(document.getElementById('hi-self').value) || 0;
     var sfPay  = parseFloat(document.getElementById('sf-payment').value) || 0;
     var line5  = document.getElementById('line5-check').checked;
-    var hiKids = Math.max(0, 1000 - hiSelf);
+    var hiKids = Math.max(0, 1137.89 - hiSelf);
     var phone  = 148.37 + (line5 ? 6.51 : 0);
     var total  = 196.52 + 503.69 + sfPay + phone + hiKids;
     document.getElementById('hi-kids-val').textContent   = fmt(hiKids);
