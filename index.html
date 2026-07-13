@@ -1306,7 +1306,12 @@
         sessionStorage.setItem(KEY,JSON.stringify({email:p.email,name:p.name||p.email,ts:Date.now()}));
         show(p.name||p.email);
       } else {
-        document.getElementById('fd-auth-error').textContent='Access denied for '+p.email;
+        var el=document.getElementById('fd-auth-error');
+        el.innerHTML='<span style="display:block;margin-bottom:12px;color:#f87171">Access denied for <strong>'+p.email+'</strong></span>'
+          +'<a href="mailto:stevennovak78@gmail.com'
+          +'?subject='+encodeURIComponent('Financial Dashboard Access Request')
+          +'&body='+encodeURIComponent('Hi Steve,\n\nI\'d like access to your Financial Dashboard.\n\nMy Google email is: '+p.email+'\n\nThanks!')
+          +'" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;margin-top:4px">&#x2709; Request Access</a>';
       }
     }catch(e){document.getElementById('fd-auth-error').textContent='Auth error — try again.';}
   };
