@@ -3,7 +3,17 @@
 {
   "name": "Financial Dashboard",
   "schemaVersion": 1,
-  "description": "Personal financial dashboard: bill tracking with bank auto-detection and recurring-charge suggestions, categorized spending with a review queue for uncertain payees, and net worth over time. Bank data via SimpleFIN."
+  "description": "Personal financial dashboard: bill tracking with bank auto-detection and recurring-charge suggestions, categorized spending with a review queue for uncertain payees, and net worth over time. Bank data via SimpleFIN.",
+  "mcpTools": [
+    "mcp__Desktop_Commander__read_file",
+    "mcp__Desktop_Commander__start_process",
+    "mcp__Desktop_Commander__read_process_output"
+  ],
+  "mcpServerNames": [
+    "Desktop_Commander",
+    "Desktop_Commander",
+    "Desktop_Commander"
+  ]
 }
 </script>
 <html lang="en">
@@ -88,18 +98,8 @@
     <div style="font-size:52px;margin-bottom:12px">&#x1F4B0;</div>
     <h2 style="color:#f1f5f9;margin:0 0 6px;font-size:22px;font-weight:700">Financial Dashboard</h2>
     <p style="color:#64748b;margin:0 0 32px;font-size:14px">Sign in to access your private dashboard</p>
-    <div id="g_id_onload"
-         data-client_id="855215521426-tgc5a67hgp13fhkgmu3m1009aam322o6.apps.googleusercontent.com"
-         data-callback="fdHandleCredential"
-         data-auto_prompt="true"></div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="filled_blue"
-         data-text="sign_in_with"
-         data-shape="rectangular"
-         data-logo_alignment="left"
-         data-width="280"></div>
+    <div id="g_id_onload" data-client_id="855215521426-tgc5a67hgp13fhkgmu3m1009aam322o6.apps.googleusercontent.com" data-callback="fdHandleCredential" data-auto_prompt="true"></div>
+    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left" data-width="280"></div>
     <p id="fd-auth-error" style="color:#f87171;margin-top:20px;font-size:13px;min-height:18px"></p>
     <p style="color:#334155;margin-top:20px;font-size:11px">Access restricted to authorized users</p>
   </div>
@@ -116,7 +116,9 @@
     <div class="tab" data-tab="spending">Spending</div>
     <div class="tab" data-tab="networth">Net Worth</div>
     <div class="tab" data-tab="cashflow">Cash Flow</div>
+    <div class="tab" data-tab="subs">Subscriptions</div>
     <div class="tab" data-tab="business">Business</div>
+    <div class="tab" data-tab="analytics">&#128202; Analytics</div>
   </div>
 
   <!-- OVERVIEW -->
@@ -255,6 +257,19 @@
   </div>
 
   <!-- BUSINESS -->
+  <div class="view" id="view-subs" style="display:none">
+    <div class="cards" id="subCards"></div>
+    <div class="panel">
+      <h2>Detected subscriptions</h2>
+      <div style="opacity:.7;font-size:12px;margin-bottom:8px">Flagged automatically from recurring charges in the last 90 days (bank + PayPal). Click &#10005; if something is not a subscription.</div>
+      <div id="subTable"></div>
+    </div>
+    <div class="panel">
+      <h2>Ignored</h2>
+      <div id="subIgnored"></div>
+    </div>
+  </div>
+
   <div class="view" id="view-business" style="display:none">
     <div class="banner">TechD Enterprises &mdash; showing activity visible in your connected personal accounts. Link the Truist business account in SimpleFIN for the complete picture.</div>
     <div class="cards" id="bizCards"></div>
@@ -298,7 +313,182 @@
   </div>
 </div>
 
+  <!-- ═══ ANALYTICS ═══ -->
+  <div class="view" id="view-analytics" style="display:none">
+    <div class="cards" id="an-cards"></div>
+
+    <div class="panel">
+      <h2>Subscriptions &amp; Recurring Charges</h2>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Auto-detected from transaction history. Transfers, loans, and utility bills excluded. Annual cost = monthly &times; 12.</div>
+      <div id="an-sub-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div id="an-sub-table"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h2>Monthly Spending by Category</h2>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Excludes transfers &amp; investing. Scroll legend to see all.</div>
+        <div class="chartbox"><canvas id="an-mom-chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Income vs. Spending</h2>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Income includes all credits. Spending excludes transfers &amp; investing.</div>
+        <div class="chartbox"><canvas id="an-inc-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Top Merchants <span style="font-size:12px;color:var(--muted);font-weight:400">— last 90 days, expenses only</span></h2>
+      <div id="an-merchants"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Spending by Category <span style="font-size:12px;color:var(--muted);font-weight:400">— all time</span></h2>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Excludes transfers, investing &amp; internal bank moves.</div>
+      <div class="grid2" style="align-items:start">
+        <div class="chartbox" style="max-height:320px"><canvas id="an-cat-chart"></canvas></div>
+        <div id="an-cat-table"></div>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ END ANALYTICS ═══ -->
+
+
+
 <script>
+/* FD live loader: on every page load, fetch fresh SimpleFIN data via Desktop Commander and rebuild FD_BANK */
+window.FD_LIVE_READY = (function(){
+  var OUTDIR = 'C:\\Users\\steve\\AppData\\Roaming\\Claude\\local-agent-mode-sessions\\19a4a6b8-e384-484a-aeac-57e4e2dd0e86\\1fd89326-ca47-483a-91a6-fbaab2fa0503\\local_04f677f4-aab9-4f28-a316-e8acb0cb5ac7\\outputs';
+  function call(name, args){ return window.cowork.callMcpTool(name, args); }
+  function text(r){ try { return (r && r.content && r.content[0] && r.content[0].text) || ''; } catch(e){ return ''; } }
+  function stripHdr(t){ if (t.indexOf('[Reading') === 0){ var i = t.indexOf('\n\n'); return i >= 0 ? t.slice(i+2) : ''; } return t; }
+  function banner(msg, ok){
+    var b = document.getElementById('fdLiveBanner');
+    if (!b){ b = document.createElement('div'); b.id = 'fdLiveBanner';
+      b.style.cssText = 'position:fixed;top:8px;right:10px;z-index:9999;font:12px system-ui,sans-serif;padding:4px 10px;border-radius:12px;opacity:.92;';
+      document.body.appendChild(b); }
+    b.style.background = ok === false ? '#7a2c2c' : (ok ? '#1e5c3a' : '#444');
+    b.style.color = '#fff'; b.textContent = msg;
+    if (ok) setTimeout(function(){ b.style.display = 'none'; }, 8000);
+  }
+  function ps16le(s){ var out = ''; for (var i = 0; i < s.length; i++){ var c = s.charCodeAt(i); out += String.fromCharCode(c & 255) + String.fromCharCode(c >> 8); } return btoa(out); }
+  function acctType(name, org){
+    var n = (org + ' ' + name).toLowerCase();
+    if (n.split(/\s+/).indexOf('ira') >= 0 || n.indexOf('invest') >= 0 || n.indexOf('fund') >= 0 || n.indexOf('thrift') >= 0 || n.indexOf('401') >= 0 || n.indexOf('brokerage') >= 0) return 'investment';
+    if (n.indexOf('credit') >= 0 || n.indexOf('card') >= 0) return 'credit';
+    if (n.indexOf('loan') >= 0 || n.indexOf('mortgage') >= 0) return 'loan';
+    if (n.indexOf('saving') >= 0) return 'savings';
+    return 'checking';
+  }
+  function utcDay(ts){ return new Date(ts * 1000).toISOString().slice(0, 10); }
+  function dayGap(a, b){
+    var pa = a.split('-'), pb = b.split('-');
+    return Math.abs((Date.UTC(pa[0], pa[1]-1, pa[2]) - Date.UTC(pb[0], pb[1]-1, pb[2])) / 86400000);
+  }
+  function transform(raw, pp){
+    var accounts = [], txs = [], orgs = {};
+    raw.accounts.forEach(function(a){
+      var org = (a.org && (a.org.name || a.org.domain)) || 'Bank';
+      orgs[org] = 1;
+      var ol = org.toLowerCase();
+      if (ol.indexOf('self financial') >= 0) return;
+      if (ol.indexOf('geico') >= 0) return;
+      var name = a.name + (ol.indexOf('truist') >= 0 ? ' - business' : '');
+      var atype = acctType(name, org);
+      var bal = parseFloat(a.balance);
+      if (atype === 'credit' || atype === 'loan') bal = Math.abs(bal);
+      accounts.push({ id: a.id, name: (org + ' ' + name).replace(/Â?®/g, ''), type: atype, balance: bal });
+      if (atype === 'investment') return;
+      (a.transactions || []).forEach(function(t){
+        txs.push({ id: t.id, a: a.id, d: utcDay(t.transacted_at || t.posted), m: parseFloat(t.amount),
+                   p: (t.payee || '').slice(0, 60), s: (t.description || '').slice(0, 80) });
+      });
+    });
+    var used = {};
+    txs.forEach(function(t){
+      if ((t.p || '').toLowerCase().indexOf('paypal') < 0) return;
+      var best = null;
+      (pp || []).forEach(function(e, i){
+        if (used[i]) return;
+        if (Math.abs(e.m - t.m) > 0.011) return;
+        var gap = dayGap(t.d, e.d);
+        if (gap > 5) return;
+        if (!best || gap < best.gap) best = { gap: gap, i: i };
+      });
+      if (best){ used[best.i] = 1; var e = pp[best.i];
+        t.p = 'PayPal: ' + e.s; t.s = (t.s + ' / ' + e.s).slice(0, 80); }
+    });
+    txs.forEach(function(t){
+      if ((t.p || '').trim().toLowerCase() === 'caf direct check'){
+        t.p = 'Chase Auto Finance (CAF)'; t.s = (t.s + ' / Chase Auto Finance').slice(0, 80); }
+    });
+    return { fetchedAt: new Date().toLocaleDateString('en-CA'), org: Object.keys(orgs).sort().join(' / '), accounts: accounts, txs: txs };
+  }
+  async function readWrapped(path){
+    var out = [], off = 0, total = null;
+    for (var guard = 0; guard < 40; guard++){
+      var r = await call('mcp__Desktop_Commander__read_file', { path: path, offset: off, length: 8 });
+      var t = text(r);
+      if (r && r.isError) throw new Error('read failed: ' + t.slice(0, 120));
+      var m = t.match(/total:\s*(\d+)\s*lines/);
+      if (m) total = parseInt(m[1], 10);
+      var body = stripHdr(t);
+      var ls = body.split('\n').filter(function(x){ return x !== ''; });
+      if (!ls.length) break;
+      out = out.concat(ls);
+      off += ls.length;
+      if (total !== null && off >= total) break;
+      if (total === null) break;
+    }
+    return out.join('');
+  }
+  async function live(){
+    banner('Syncing live bank data…', null);
+    var acc = stripHdr(text(await call('mcp__Desktop_Commander__read_file', { path: OUTDIR + '\\simplefin-access.txt' }))).trim();
+    var m = acc.match(/^https:\/\/([^:]+):([^@]+)@(.+)$/);
+    if (!m) throw new Error('bad access url');
+    var stamp = Date.now();
+    var outFile = OUTDIR + '\\live-' + stamp + '.json';
+    var ps = "$ProgressPreference='SilentlyContinue';$ErrorActionPreference='Stop';" +
+      "$auth=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('" + m[1] + ":" + m[2] + "'));" +
+      "$s=[DateTimeOffset]::UtcNow.AddDays(-90).ToUnixTimeSeconds();" +
+      "$r=Invoke-WebRequest -Uri ('https://" + m[3] + "/accounts?start-date='+$s) -Headers @{Authorization=('Basic '+$auth)} -UseBasicParsing;" +
+      "$c=$r.Content;$sb=New-Object Text.StringBuilder;" +
+      "for($i=0;$i -lt $c.Length;$i+=2500){[void]$sb.AppendLine($c.Substring($i,[Math]::Min(2500,$c.Length-$i)))};" +
+      "[IO.File]::WriteAllText('" + outFile + "',$sb.ToString());" +
+      "[IO.File]::WriteAllText('" + OUTDIR + "\\simplefin-data.json',$c);" +
+      "Write-Output ('SYNC_OK '+$c.Length)";
+    var pr = await call('mcp__Desktop_Commander__start_process',
+      { command: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -EncodedCommand ' + ps16le(ps), timeout_ms: 40000 });
+    var ptxt = text(pr);
+    var pid = (ptxt.match(/PID (\d+)/) || [])[1];
+    var done = /SYNC_OK/.test(ptxt);
+    for (var i = 0; !done && pid && i < 10; i++){
+      var po = text(await call('mcp__Desktop_Commander__read_process_output', { pid: parseInt(pid, 10), timeout_ms: 4000 }));
+      if (/SYNC_OK/.test(po)) done = true;
+      if (/exit code [1-9]/.test(po)) throw new Error('fetch process failed');
+    }
+    if (!done) throw new Error('fetch timed out');
+    var raw = JSON.parse(await readWrapped(outFile));
+    var pp = [];
+    try { pp = JSON.parse(stripHdr(text(await call('mcp__Desktop_Commander__read_file', { path: OUTDIR + '\\paypal-data.json' }))).replace(/\n/g, '')); } catch(e){}
+    var fresh = transform(raw, pp);
+    if (!fresh.accounts.length) throw new Error('no accounts in response');
+    window.FD_BANK = fresh;
+    var errs = (raw.errors || []).filter(function(e){ return /attention|auth/i.test(e); });
+    var t = new Date();
+    banner('Live · synced ' + ('0'+t.getHours()).slice(-2) + ':' + ('0'+t.getMinutes()).slice(-2) +
+      (errs.length ? ' · ' + errs.length + ' bank(s) need re-auth' : ''), true);
+  }
+  var timeout = new Promise(function(res){ setTimeout(res, 65000); });
+  var attempt = (window.cowork && window.cowork.callMcpTool)
+    ? live().catch(function(e){ banner('Live sync failed (' + (e && e.message || 'error') + ') — showing data from ' + (window.FD_BANK ? window.FD_BANK.fetchedAt : '?'), false); })
+    : Promise.resolve();
+  return Promise.race([attempt, timeout]);
+})();
+</script>
+<script>
+window.FD_LIVE_READY.then(function(){
 (function(){
   'use strict';
   // ---------- storage ----------
@@ -497,8 +687,10 @@
     // snapshot balances once per sync date
     var changed = false;
     BANK.accounts.forEach(function(a){
-      var exists = bankSnaps.some(function(s){ return s.accountId === a.id && s.date === BANK.fetchedAt; });
-      if (!exists) { bankSnaps.push({ accountId: a.id, date: BANK.fetchedAt, balance: a.balance, ts: Date.now() }); changed = true; }
+      var found = null;
+      bankSnaps.forEach(function(s){ if (s.accountId === a.id && s.date === BANK.fetchedAt) found = s; });
+      if (!found) { bankSnaps.push({ accountId: a.id, date: BANK.fetchedAt, balance: a.balance, ts: Date.now() }); changed = true; }
+      else if (found.balance !== a.balance) { found.balance = a.balance; found.ts = Date.now(); changed = true; }
     });
     if (changed) save(K.bankSnaps, bankSnaps);
   }
@@ -625,6 +817,7 @@
       if (t.dataset.tab === 'spending') renderSpending();
       if (t.dataset.tab === 'networth') renderNetWorth();
       if (t.dataset.tab === 'cashflow') renderCashflow();
+      if (t.dataset.tab === 'subs') renderSubs();
       if (t.dataset.tab === 'business') renderBusiness();
     });
   });
@@ -1172,6 +1365,115 @@
   });
 
   // ---------- business ----------
+  // ---------- subscriptions ----------
+  var SUB_HINTS = ['netflix','spotify','hulu','youtube','washington post','adobe','openai','chatgpt','google one','google workspace','dashpass','mcafee','spokeo','efax','humblefax','zenbusiness','base44','squarespace','sqsp','websit','premium','subscription','subscr','patreon','apple.com','disney','paramount','peacock','audible','icloud','dropbox','canva','notion','coinbase','amazon prime','prime video','plushcare','hone health','simplefin','crunchyroll','xbox','playstation plus','nintendo online','paddle','rocket money','recurring','recu ','bark','google storage','onedrive','grammarly','1password','nordvpn','expressvpn'];
+  var SUB_BLOCK = ['venmo','zelle','cash app','acorns','wealthfront','thrift','tsp','rose taylor','self lender','lead bank','self financial','department of education','educ sys','nelnet','caf direct','chase auto','open sky','openskycc','marriott','deposit','withdrawal','transfer','atm ','forte meade','weis','giant food','safeway','instacart','whole foods','trader joe','wawa','highs','7-eleven','seven eleven','starbucks','dunkin','chick','taco bell','five guys','mcdonald','rise up','black market baker','positano','choptank','cantlers','docs riverside','capriotti','mod pizza','supercharg','tesla','defense hwy','gas','fuel','mayo edgewater','cvs','walgreens','michaels','ebay','target','walmart','costco','sams club','us postal','usps','honk','parking','verizon','t-mobile','tmobile','baltimore gas','bge','geico','uber','lyft','doordash order','hotel','airbnb','home depot','lowes','redweek','lucia del carmen','fsa','irs','treas'];
+  function subKey(p){
+    return (p || '').toLowerCase().replace(/^paypal:\s*/, '').replace(/\(.*?\)/g, '')
+      .replace(/[^a-z ]+/g, ' ').replace(/\s+/g, ' ').trim().split(' ').slice(0, 3).join(' ');
+  }
+  function subGap(a, b){
+    var pa = a.split('-'), pb = b.split('-');
+    return Math.abs((Date.UTC(pa[0], pa[1]-1, pa[2]) - Date.UTC(pb[0], pb[1]-1, pb[2])) / 86400000);
+  }
+  var SUB_FACTOR = { weekly: 4.33, biweekly: 2.17, monthly: 1, quarterly: 1/3, semiannual: 1/6, annual: 1/12 };
+  var SUB_DAYS = { weekly: 7, biweekly: 14, monthly: 30, quarterly: 91, semiannual: 182, annual: 365 };
+  function detectSubs(){
+    var groups = {};
+    bankTxs.forEach(function(t){
+      if (t.amount >= 0) return;
+      var k = subKey(t.payee || t.description);
+      if (!k) return;
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(t);
+    });
+    var subs = [];
+    Object.keys(groups).forEach(function(k){
+      var list = groups[k].slice().sort(function(a, b){ return a.date < b.date ? -1 : 1; });
+      var clusters = [];
+      list.forEach(function(t){
+        var amt = -t.amount;
+        var c = null;
+        for (var i = 0; i < clusters.length; i++){
+          if (Math.abs(clusters[i].amt - amt) <= Math.max(1.5, clusters[i].amt * 0.08)) { c = clusters[i]; break; }
+        }
+        if (c){ c.txs.push(t); c.amt = amt; } else clusters.push({ amt: amt, txs: [t] });
+      });
+      clusters.forEach(function(c){
+        var lastTx = c.txs[c.txs.length - 1];
+        var blob = (k + ' ' + (lastTx.payee || '') + ' ' + (lastTx.description || '')).toLowerCase();
+        if (SUB_BLOCK.some(function(h){ return blob.indexOf(h) >= 0; })) return;
+        if (k.indexOf('paypal') === 0) return; // unenriched generic PayPal charges
+        var hinted = SUB_HINTS.some(function(h){ return blob.indexOf(h) >= 0; });
+        if (blob.indexOf('amazon') >= 0 && !hinted) return; // regular Amazon shopping
+        var amts = c.txs.map(function(t){ return -t.amount; });
+        var spread = Math.max.apply(null, amts) - Math.min.apply(null, amts);
+        var gaps = [];
+        for (var i = 1; i < c.txs.length; i++) gaps.push(subGap(c.txs[i].date, c.txs[i-1].date));
+        var cad = null, guess = false;
+        if (gaps.length){
+          var g = gaps.slice().sort(function(a, b){ return a - b; })[Math.floor(gaps.length / 2)];
+          if (g >= 26 && g <= 35) cad = 'monthly';
+          else if (g >= 12 && g <= 18) cad = 'biweekly';
+          else if (g >= 5 && g <= 9) cad = 'weekly';
+          else if (g >= 80 && g <= 100) cad = 'quarterly';
+          else if (g >= 170 && g <= 200) cad = 'semiannual';
+          else if (g >= 330 && g <= 400) cad = 'annual';
+        }
+        if (hinted && (cad === 'weekly' || cad === 'biweekly') && c.txs.length < 3){ guess = true; cad = 'monthly'; }
+        if (!cad && hinted){ guess = true; cad = blob.indexOf('annual') >= 0 ? 'annual' : 'monthly'; }
+        if (!cad) return;
+        if (!hinted){
+          // unrecognized merchants must look like a fixed recurring plan: >=2 charges,
+          // near-identical amounts, monthly-or-longer cycle
+          if (c.txs.length < 2 || spread > 1.0) return;
+          if (cad === 'weekly' || cad === 'biweekly') return;
+        }
+        var next = new Date(lastTx.date + 'T00:00:00Z');
+        next.setUTCDate(next.getUTCDate() + SUB_DAYS[cad]);
+        var daysSince = subGap(new Date().toISOString().slice(0, 10), lastTx.date);
+        subs.push({ key: k + '|' + Math.round(c.amt), name: (lastTx.payee || lastTx.description || k).replace(/^PayPal: /, '') ,
+          amt: -lastTx.amount, cad: cad, guess: guess, last: lastTx.date, count: c.txs.length,
+          active: daysSince <= SUB_DAYS[cad] * 1.6 + 4,
+          next: next.toISOString().slice(0, 10), monthly: c.amt * SUB_FACTOR[cad] });
+      });
+    });
+    subs.sort(function(a, b){ return b.monthly - a.monthly; });
+    return subs;
+  }
+  function renderSubs(){
+    var ignored = load('fd_sub_ignore') || [];
+    var all = detectSubs();
+    var active = all.filter(function(s){ return ignored.indexOf(s.key) < 0; });
+    var hidden = all.filter(function(s){ return ignored.indexOf(s.key) >= 0; });
+    var mTotal = active.reduce(function(a, s){ return a + (s.active ? s.monthly : 0); }, 0);
+    document.getElementById('subCards').innerHTML =
+      card('Monthly subscription cost', money(mTotal), 'active only, normalized to monthly') +
+      card('Active subscriptions', String(active.length), hidden.length ? hidden.length + ' ignored' : '') +
+      card('Annualized', money(mTotal * 12), '');
+    function row(s, ig){
+      return '<tr' + (s.active ? '' : ' style="opacity:.55"') + '><td>' + esc(s.name) + (s.guess ? ' <span class="chip upcoming" style="font-size:10px">guess</span>' : '') + (s.active ? '' : ' <span class="chip" style="font-size:10px">inactive?</span>') + '</td>' +
+        '<td class="num">' + money(s.amt) + '</td><td>' + s.cad + '</td>' +
+        '<td class="num">' + money(s.monthly) + '</td>' +
+        '<td>' + niceDate(s.last) + '</td><td>' + niceDate(s.next) + '</td>' +
+        '<td class="num">' + s.count + '</td>' +
+        '<td class="num"><button class="small ' + (ig ? '' : 'danger') + '" data-subtoggle="' + esc(s.key) + '">' + (ig ? 'restore' : '&#10005;') + '</button></td></tr>';
+    }
+    var head = '<table><thead><tr><th>Subscription</th><th class="num">Amount</th><th>Cycle</th><th class="num">Per month</th><th>Last charged</th><th>Next expected</th><th class="num">Seen</th><th></th></tr></thead><tbody>';
+    document.getElementById('subTable').innerHTML = active.length ? head + active.map(function(s){ return row(s, false); }).join('') + '</tbody></table>' : '<div style="opacity:.7">No recurring subscriptions detected.</div>';
+    document.getElementById('subIgnored').innerHTML = hidden.length ? head + hidden.map(function(s){ return row(s, true); }).join('') + '</tbody></table>' : '<div style="opacity:.7">Nothing ignored.</div>';
+    document.querySelectorAll('[data-subtoggle]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var ig = load('fd_sub_ignore') || [];
+        var k = b.dataset.subtoggle;
+        var i = ig.indexOf(k);
+        if (i >= 0) ig.splice(i, 1); else ig.push(k);
+        save('fd_sub_ignore', ig);
+        renderSubs();
+      });
+    });
+  }
+
   function renderBusiness(){
     var rows = [];
     bankTxs.forEach(function(t){
@@ -1282,15 +1584,440 @@
   autoMarkFromBank();
   renderAll();
 })();
+});
 </script>
 
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   ANALYTICS MODULE
+   ════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+// ── Category map (payee keyword → category) ────────────────────────────────
+var CATS = {
+  // Housing
+  'rose taylor':'Housing','lucia del carmen':'Housing','lucia granados':'Housing',
+  // Auto loans / DMV
+  'chase auto':'Auto','caf':'Auto','educ sys fcu':'Auto','dc dmv':'Auto',
+  // Transportation
+  'tesla motors':'Transportation','supercharg':'Transportation','supercharger':'Transportation',
+  'honk':'Transportation','uber':'Transportation','lyft':'Transportation',
+  // Investing (transfers to investment accounts - skip from expense charts)
+  'wealthfront':'Investing','acorns invest':'Investing','acorns later':'Investing',
+  'tsp  treas':'Investing','thrift saving':'Investing',
+  // Debt/credit building
+  'self lender':'Debt','lead bank self':'Debt','nelnet':'Debt','department of education':'Debt',
+  'marriott mvc':'Debt','marriott vacation club':'Debt',
+  // Travel
+  'marriott resort':'Travel','marriott resorts':'Travel',
+  // Subscriptions
+  'openai':'Subscriptions','chatgpt':'Subscriptions',
+  'bark':'Subscriptions','washington post':'Subscriptions',
+  'youtube tv':'Subscriptions','youtube':'Subscriptions',
+  'dashpass':'Subscriptions','doordashdashpass':'Subscriptions',
+  'plushcare':'Subscriptions','spokeo':'Subscriptions',
+  'squarespace':'Subscriptions','websit':'Subscriptions',
+  'base44':'Subscriptions','paddle':'Subscriptions',
+  'link com  simplefin':'Subscriptions','simplefin':'Subscriptions',
+  'lovelica':'Subscriptions','call me chat':'Subscriptions',
+  'x8742 premium':'Subscriptions','x premium':'Subscriptions',
+  'zenbusiness':'Subscriptions','subscription':'Subscriptions',
+  'coinbase':'Subscriptions',
+  // Utilities
+  'verizon':'Utilities','baltimore gas':'Utilities','bge':'Utilities',
+  't-mobile':'Utilities','tmobile':'Utilities',
+  // Insurance
+  'geico':'Insurance',
+  // Health
+  'hone health':'Health','zepbound':'Health','cvs':'Health',
+  'mayo edgewater':'Health','forte meade':'Health','plushcare':'Health',
+  // Food & Dining
+  'wawa':'Food & Dining','taco bell':'Food & Dining','chick-fil-a':'Food & Dining',
+  'mod pizza':'Food & Dining','cantlers':'Food & Dining','choptank':'Food & Dining',
+  'positano':'Food & Dining','docs riverside':'Food & Dining','capriotti':'Food & Dining',
+  'highs':'Food & Dining','cape wine':'Food & Dining','door dash':'Food & Dining',
+  // Groceries
+  'instacart':'Groceries',
+  // Shopping
+  'amazon':'Shopping','ebay':'Shopping','michaels':'Shopping',
+  // Transfers/internal (skip from charts)
+  'venmo':'Transfers','withdrawal to 360':'Transfers','deposit from':'Transfers',
+  'transfer to venmo':'Transfers','paypal to steven novak':'Transfers',
+  'acorns checking':'Transfers'
+};
+
+// Subscription definitions for deep-dive table
+var SUB_DEFS = {
+  'openai':          { label:'ChatGPT Plus',       icon:'🤖', cat:'AI & Software' },
+  'chatgpt':         { label:'ChatGPT Plus',       icon:'🤖', cat:'AI & Software' },
+  'coinbase':        { label:'Coinbase One',        icon:'₿',  cat:'Crypto/Finance' },
+  'bark':            { label:'Bark Family Safety',  icon:'🛡️',  cat:'Family Safety' },
+  'washington post': { label:'Washington Post',     icon:'📰', cat:'News' },
+  'youtube tv':      { label:'YouTube TV',          icon:'📺', cat:'Entertainment' },
+  'youtube':         { label:'YouTube TV',          icon:'📺', cat:'Entertainment' },
+  'dashpass':        { label:'DoorDash DashPass',   icon:'🚀', cat:'Food Delivery' },
+  'doordashdashpass':{ label:'DoorDash DashPass',   icon:'🚀', cat:'Food Delivery' },
+  'plushcare':       { label:'Plushcare',           icon:'💊', cat:'Health' },
+  'spokeo':          { label:'Spokeo',              icon:'🔍', cat:'Info Services' },
+  'websit':          { label:'Squarespace',         icon:'🌐', cat:'Software' },
+  'squarespace':     { label:'Squarespace',         icon:'🌐', cat:'Software' },
+  'base44':          { label:'Base44',              icon:'💻', cat:'Software' },
+  'paddle':          { label:'Paddle (Software)',   icon:'💻', cat:'Software' },
+  'simplefin':       { label:'SimpleFIN',           icon:'🏦', cat:'Finance Tools' },
+  'link com  simplefin':{ label:'SimpleFIN',        icon:'🏦', cat:'Finance Tools' },
+  'lovelica':        { label:'Lovelica',            icon:'🎵', cat:'Entertainment' },
+  'call me chat':    { label:'Call Me Chat',        icon:'💬', cat:'Communication' },
+  'x8742 premium':   { label:'X (Twitter) Premium', icon:'𝕏', cat:'Social Media' },
+  'x premium':       { label:'X (Twitter) Premium', icon:'𝕏', cat:'Social Media' },
+  'zenbusiness':     { label:'ZenBusiness',         icon:'🏢', cat:'Business' },
+  'subscription':    { label:'Subscription',        icon:'📦', cat:'Other' }
+};
+
+// Categories to SKIP from expense totals (transfers, investing moves)
+var SKIP_CATS = { 'Transfers':1,'Investing':1 };
+
+// ── Helper: get category for a transaction ─────────────────────────────────
+function getCat(tx){
+  var catOv  = JSON.parse(localStorage.getItem('fd_cat_overrides') || '{}');
+  var prules = JSON.parse(localStorage.getItem('fd_payee_rules')    || '{}');
+  if (catOv[tx.id]) return catOv[tx.id];
+  var pnorm = (tx.p||'').toLowerCase();
+  var snorm = (tx.s||'').toLowerCase();
+  for (var k in prules){
+    if (pnorm.indexOf(k.toLowerCase()) !== -1) return prules[k];
+  }
+  for (var kw in CATS){
+    if (pnorm.indexOf(kw) !== -1 || snorm.indexOf(kw) !== -1) return CATS[kw];
+  }
+  return tx.m > 0 ? 'Income' : 'Other';
+}
+
+// ── Helper: money format ────────────────────────────────────────────────────
+function $m(n){ return '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── Helper: month label ─────────────────────────────────────────────────────
+function monthLabel(ym){
+  var parts = ym.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(parts[1],10)-1]+' '+parts[0].slice(2);
+}
+
+// ── Detect subscriptions ────────────────────────────────────────────────────
+function detectSubs(txs){
+  var groups = {};
+  txs.forEach(function(tx){
+    if (tx.m >= 0) return;
+    var key = (tx.p||'').toLowerCase().trim();
+    // skip known non-subs
+    var cat = getCat(tx);
+    if (cat==='Housing'||cat==='Auto'||cat==='Debt'||cat==='Investing'||cat==='Transfers') return;
+    if (!groups[key]) groups[key] = { txs:[], payee:tx.p };
+    groups[key].txs.push(tx);
+  });
+
+  var subs = [];
+  Object.keys(groups).forEach(function(key){
+    var g = groups[key];
+    if (g.txs.length < 2) return;
+    // Must span ≥2 different months
+    var months = {};
+    g.txs.forEach(function(t){ months[t.d.substr(0,7)] = 1; });
+    if (Object.keys(months).length < 2) return;
+    // Amount consistency: median-based, allow 25% variance
+    var amts = g.txs.map(function(t){ return Math.abs(t.m); }).sort(function(a,b){return a-b;});
+    var med = amts[Math.floor(amts.length/2)];
+    var consistent = amts.every(function(a){ return Math.abs(a-med)/med < 0.25; });
+    if (!consistent) return;
+    var avg = amts.reduce(function(a,b){return a+b;},0)/amts.length;
+    var latest = g.txs.slice().sort(function(a,b){return b.d.localeCompare(a.d);})[0];
+    // Find sub def
+    var def = null;
+    for (var kw in SUB_DEFS){
+      if (key.indexOf(kw) !== -1 || (latest.s||'').toLowerCase().indexOf(kw) !== -1){
+        def = SUB_DEFS[kw]; break;
+      }
+    }
+    subs.push({
+      label: def ? def.label : g.payee,
+      icon:  def ? def.icon  : '📦',
+      cat:   def ? def.cat   : getCat(latest),
+      monthly: avg,
+      annual:  avg * 12,
+      last: latest.d,
+      count: g.txs.length
+    });
+  });
+
+  return subs.sort(function(a,b){ return b.monthly - a.monthly; });
+}
+
+// ── Palette for charts ──────────────────────────────────────────────────────
+var PALETTE = [
+  '#6366f1','#f59e0b','#10b981','#ef4444','#3b82f6',
+  '#8b5cf6','#ec4899','#14b8a6','#f97316','#84cc16',
+  '#06b6d4','#a855f7','#fb923c'
+];
+
+// ── Render ──────────────────────────────────────────────────────────────────
+var anChartMom = null, anChartInc = null, anChartCat = null;
+var anDone = false;
+
+function renderAnalytics(){
+  if (anDone) return;
+  anDone = true;
+
+  var BANK = window.FD_BANK;
+  if (!BANK || !BANK.txs || !BANK.txs.length){
+    document.getElementById('an-cards').innerHTML = '<p style="color:var(--muted)">No bank data available.</p>';
+    return;
+  }
+
+  var allTxs = BANK.txs;
+  var now = new Date();
+  var d90 = new Date(now - 90*24*60*60*1000);
+  var d90iso = d90.toISOString().slice(0,10);
+
+  // ── Build monthly buckets ─────────────────────────────────────────────────
+  var monthSet = {};
+  var monthExp = {}; // ym → { cat → total }
+  var monthInc = {}; // ym → total income
+  var monthSpend = {}; // ym → total spending (ex transfers/investing)
+
+  allTxs.forEach(function(tx){
+    var ym = tx.d.substr(0,7);
+    monthSet[ym] = 1;
+    if (!monthExp[ym]) monthExp[ym] = {};
+    if (!monthInc[ym]) monthInc[ym] = 0;
+    if (!monthSpend[ym]) monthSpend[ym] = 0;
+
+    if (tx.m > 0){
+      monthInc[ym] += tx.m;
+    } else {
+      var cat = getCat(tx);
+      if (!SKIP_CATS[cat]){
+        if (!monthExp[ym][cat]) monthExp[ym][cat] = 0;
+        monthExp[ym][cat] += Math.abs(tx.m);
+        monthSpend[ym] += Math.abs(tx.m);
+      }
+    }
+  });
+
+  var months = Object.keys(monthSet).sort();
+
+  // ── Subscriptions ─────────────────────────────────────────────────────────
+  var subs = detectSubs(allTxs);
+  var subTotal = subs.reduce(function(a,b){return a+b.monthly;},0);
+
+  // ── Top merchants (last 90 days) ──────────────────────────────────────────
+  var merchants = {};
+  allTxs.forEach(function(tx){
+    if (tx.m >= 0) return;
+    if (tx.d < d90iso) return;
+    var cat = getCat(tx);
+    if (SKIP_CATS[cat]) return;
+    var key = tx.p;
+    if (!merchants[key]) merchants[key] = { name:tx.p, cat:cat, total:0, count:0 };
+    merchants[key].total += Math.abs(tx.m);
+    merchants[key].count++;
+  });
+  var topM = Object.values(merchants).sort(function(a,b){return b.total-a.total;}).slice(0,15);
+
+  // ── All-time category totals ──────────────────────────────────────────────
+  var catTotals = {};
+  allTxs.forEach(function(tx){
+    if (tx.m >= 0) return;
+    var cat = getCat(tx);
+    if (SKIP_CATS[cat]) return;
+    catTotals[cat] = (catTotals[cat]||0) + Math.abs(tx.m);
+  });
+  var catSorted = Object.keys(catTotals).sort(function(a,b){return catTotals[b]-catTotals[a];});
+  var totalAllTime = catSorted.reduce(function(a,c){return a+catTotals[c];},0);
+
+  // ── Summary cards ─────────────────────────────────────────────────────────
+  var lastMo = months[months.length-1]||'';
+  var thisMonthSpend = monthSpend[lastMo]||0;
+  var lastMonthSpend = monthSpend[months[months.length-2]]||0;
+  var spendDelta = lastMo && lastMonthSpend ? ((thisMonthSpend-lastMonthSpend)/lastMonthSpend*100) : null;
+
+  document.getElementById('an-cards').innerHTML = [
+    card('Subscriptions/mo',  $m(subTotal), subs.length + ' services detected', '#6366f1'),
+    card('Annual sub cost',   $m(subTotal*12), 'based on monthly charges', '#f59e0b'),
+    card(monthLabel(lastMo)+' spending', $m(thisMonthSpend),
+      spendDelta !== null ? (spendDelta>=0?'▲':'▼')+Math.abs(spendDelta).toFixed(0)+'% vs prior month' : '', '#10b981'),
+    card('All-time tracked',  $m(totalAllTime), months.length+' months of data', '#3b82f6')
+  ].join('');
+
+  // ── Subscription table ────────────────────────────────────────────────────
+  var subSummaryHtml = '';
+  var catGroups = {};
+  subs.forEach(function(s){
+    if (!catGroups[s.cat]) catGroups[s.cat] = [];
+    catGroups[s.cat].push(s);
+  });
+  Object.keys(catGroups).sort().forEach(function(c){
+    var total = catGroups[c].reduce(function(a,s){return a+s.monthly;},0);
+    subSummaryHtml += '<div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px">'
+      +'<div style="font-size:11px;color:var(--muted);margin-bottom:4px">'+esc(c)+'</div>'
+      +'<div style="font-size:16px;font-weight:700;color:var(--text)">'+$m(total)+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/mo</span></div>'
+      +'</div>';
+  });
+  document.getElementById('an-sub-summary').innerHTML = subSummaryHtml || '<span style="color:var(--muted);font-size:13px">No recurring charges detected in 2+ months.</span>';
+
+  var subRows = subs.map(function(s,i){
+    return '<tr>'
+      +'<td>'+s.icon+' '+esc(s.label)+'</td>'
+      +'<td><span class="chip">'+esc(s.cat)+'</span></td>'
+      +'<td class="num">'+$m(s.monthly)+'/mo</td>'
+      +'<td class="num" style="color:var(--muted)">'+$m(s.annual)+'/yr</td>'
+      +'<td>'+s.last+'</td>'
+      +'<td class="num" style="color:var(--muted)">'+s.count+'x</td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('an-sub-table').innerHTML = subs.length
+    ? '<table><tr><th>Service</th><th>Category</th><th class="num">Monthly</th><th class="num">Annual</th><th>Last charge</th><th class="num">Seen</th></tr>'+ subRows +'</table>'
+    : '<p style="color:var(--muted);font-size:13px">No subscriptions detected yet.</p>';
+
+  // ── Top merchants table ───────────────────────────────────────────────────
+  var mRows = topM.map(function(m,i){
+    var bar = '<div style="background:'+PALETTE[i%PALETTE.length]+';opacity:.7;height:6px;border-radius:3px;width:'
+      +Math.round(m.total/topM[0].total*100)+'%;margin-top:4px"></div>';
+    return '<tr><td style="width:24px;color:var(--muted);font-size:12px">'+(i+1)+'</td>'
+      +'<td>'+esc(m.name)+bar+'</td>'
+      +'<td><span class="chip">'+esc(m.cat)+'</span></td>'
+      +'<td class="num">'+$m(m.total)+'</td>'
+      +'<td class="num" style="color:var(--muted)">'+m.count+'x</td>'
+      +'<td class="num" style="color:var(--muted)">'+$m(m.total/m.count)+' avg</td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('an-merchants').innerHTML = topM.length
+    ? '<table><tr><th>#</th><th>Merchant</th><th>Category</th><th class="num">Total</th><th class="num">Txns</th><th class="num">Avg</th></tr>'+mRows+'</table>'
+    : '<p style="color:var(--muted)">No data for last 90 days.</p>';
+
+  // ── Category breakdown table ──────────────────────────────────────────────
+  var cRows = catSorted.map(function(cat,i){
+    var pct = (catTotals[cat]/totalAllTime*100).toFixed(1);
+    return '<tr><td style="display:flex;align-items:center;gap:8px">'
+      +'<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+PALETTE[i%PALETTE.length]+'"></span>'+esc(cat)+'</td>'
+      +'<td class="num">'+$m(catTotals[cat])+'</td>'
+      +'<td class="num" style="color:var(--muted)">'+pct+'%</td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('an-cat-table').innerHTML = '<table><tr><th>Category</th><th class="num">Total</th><th class="num">Share</th></tr>'+cRows+'</table>';
+
+  // ── Charts ────────────────────────────────────────────────────────────────
+  requestAnimationFrame(function(){
+    // Collect all categories present
+    var allCats = {};
+    months.forEach(function(ym){ Object.keys(monthExp[ym]||{}).forEach(function(c){ allCats[c]=1; }); });
+    var cats = Object.keys(allCats).sort(function(a,b){ return (catTotals[b]||0)-(catTotals[a]||0); });
+
+    // Month-over-month stacked bar
+    var momCtx = document.getElementById('an-mom-chart').getContext('2d');
+    if (anChartMom) anChartMom.destroy();
+    anChartMom = new Chart(momCtx, {
+      type:'bar',
+      data:{
+        labels: months.map(monthLabel),
+        datasets: cats.map(function(cat,i){
+          return {
+            label: cat,
+            data: months.map(function(ym){ return Math.round((monthExp[ym]||{})[cat]||0); }),
+            backgroundColor: PALETTE[i%PALETTE.length],
+            stack:'s'
+          };
+        })
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:10} } } },
+        scales:{
+          x:{ stacked:true, grid:{display:false} },
+          y:{ stacked:true, ticks:{ callback:function(v){ return '$'+v.toLocaleString(); } } }
+        }
+      }
+    });
+
+    // Income vs Spending grouped bar
+    var incCtx = document.getElementById('an-inc-chart').getContext('2d');
+    if (anChartInc) anChartInc.destroy();
+    anChartInc = new Chart(incCtx, {
+      type:'bar',
+      data:{
+        labels: months.map(monthLabel),
+        datasets:[
+          { label:'Income', data: months.map(function(ym){ return Math.round(monthInc[ym]||0); }),
+            backgroundColor:'#10b981' },
+          { label:'Spending', data: months.map(function(ym){ return Math.round(monthSpend[ym]||0); }),
+            backgroundColor:'#ef4444' }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:10} } } },
+        scales:{
+          x:{ grid:{display:false} },
+          y:{ ticks:{ callback:function(v){ return '$'+v.toLocaleString(); } } }
+        }
+      }
+    });
+
+    // Category donut
+    var catCtx = document.getElementById('an-cat-chart').getContext('2d');
+    if (anChartCat) anChartCat.destroy();
+    anChartCat = new Chart(catCtx, {
+      type:'doughnut',
+      data:{
+        labels: catSorted,
+        datasets:[{
+          data: catSorted.map(function(c){ return Math.round(catTotals[c]); }),
+          backgroundColor: catSorted.map(function(c,i){ return PALETTE[i%PALETTE.length]; }),
+          borderWidth:1
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{ callbacks:{ label:function(ctx){
+            return ' '+ctx.label+': $'+ctx.parsed.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+          }}}
+        }
+      }
+    });
+  });
+}
+
+// ── Card helper ─────────────────────────────────────────────────────────────
+function card(label, value, sub, color){
+  return '<div class="card">'
+    +'<div class="cardLabel">'+label+'</div>'
+    +'<div class="cardValue" style="color:'+color+'">'+value+'</div>'
+    +(sub?'<div class="cardSub">'+sub+'</div>':'')
+    +'</div>';
+}
+
+// ── Escape HTML ─────────────────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Wire up tab click ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[data-tab="analytics"]').forEach(function(el){
+    el.addEventListener('click', function(){
+      setTimeout(renderAnalytics, 80);
+    });
+  });
+});
+
+})(); // end analytics module
+</script>
+
+
 </div>
-<button id="fd-signout" onclick="fdSignOut()" title="Sign out" style="display:none;position:fixed;bottom:20px;right:20px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;z-index:9998">Sign out</button>
+<button id="fd-signout" onclick="fdSignOut()" style="display:none;position:fixed;bottom:20px;right:20px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;z-index:9998">Sign out</button>
 <script>
 (function(){
   var ALLOWED=['stevennovak78@gmail.com'];
-  var KEY='fd_gauth';
-  var TTL=8*60*60*1000;
+  var KEY='fd_gauth', TTL=8*60*60*1000;
   function show(name){
     document.getElementById('fd-auth-gate').style.display='none';
     document.getElementById('fd-main').style.display='block';
@@ -1308,10 +2035,8 @@
       } else {
         var el=document.getElementById('fd-auth-error');
         el.innerHTML='<span style="display:block;margin-bottom:12px;color:#f87171">Access denied for <strong>'+p.email+'</strong></span>'
-          +'<a href="mailto:stevennovak78@gmail.com'
-          +'?subject='+encodeURIComponent('Financial Dashboard Access Request')
-          +'&body='+encodeURIComponent('Hi Steve,\n\nI\'d like access to your Financial Dashboard.\n\nMy Google email is: '+p.email+'\n\nThanks!')
-          +'" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;margin-top:4px">&#x2709; Request Access</a>';
+          +'<a href="mailto:stevennovak78@gmail.com?subject='+encodeURIComponent('Financial Dashboard Access Request')+'&body='+encodeURIComponent('Hi Steve,\n\nI\'d like access to your Financial Dashboard.\n\nMy Google email is: '+p.email+'\n\nThanks!')
+          +'" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600">&#x2709; Request Access</a>';
       }
     }catch(e){document.getElementById('fd-auth-error').textContent='Auth error — try again.';}
   };
