@@ -318,6 +318,35 @@
   <div class="view" id="view-analytics" style="display:none">
     <div class="cards" id="an-cards"></div>
 
+    <!-- ══════════════════════════ SAVINGS WINS ══════════════════════════ -->
+    <div class="panel" style="border-color:var(--green);background:var(--green-soft)" id="wins-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h2 style="color:var(--green);margin:0">&#127942; Savings Wins</h2>
+        <div id="wins-total-badge" style="background:var(--green);color:#fff;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700"></div>
+      </div>
+      <table style="font-size:13px;width:100%" id="wins-table">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="padding:6px 8px;text-align:left;font-weight:500;color:var(--muted)">Subscription</th>
+            <th style="padding:6px 8px;text-align:right;font-weight:500;color:var(--muted)">Was</th>
+            <th style="padding:6px 8px;text-align:right;font-weight:500;color:var(--muted)">Now</th>
+            <th style="padding:6px 8px;text-align:right;font-weight:500;color:var(--muted)">Saved/mo</th>
+            <th style="padding:6px 8px;text-align:right;font-weight:500;color:var(--muted)">Saved/yr</th>
+            <th style="padding:6px 8px;width:32px"></th>
+          </tr>
+        </thead>
+        <tbody id="wins-body"></tbody>
+      </table>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input id="win-name" type="text" placeholder="Subscription name" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-size:13px;flex:1;min-width:140px">
+        <input id="win-was"  type="number" placeholder="Was $/mo" min="0" step="0.01" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-size:13px;width:90px;text-align:right">
+        <input id="win-now"  type="number" placeholder="Now $/mo" min="0" step="0.01" value="0" style="padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);font-size:13px;width:90px;text-align:right">
+        <button onclick="addWin()" style="padding:6px 16px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">+ Add Win</button>
+      </div>
+    </div>
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+
+
     <div class="panel">
       <h2>Subscriptions &amp; Recurring Charges</h2>
       <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Auto-detected from transaction history. Transfers, loans, and utility bills excluded. Annual cost = monthly &times; 12.</div>
@@ -2008,6 +2037,77 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 });
+
+
+/* ── SAVINGS WINS MODULE ───────────────────────────────────────────── */
+(function(){
+  var LS = 'fd_wins';
+  var DEFAULT_WINS = [
+    {name:'ZenBusiness', was:39.08, now:0,    note:'Cancelled — $169 annual + $20/mo + $5/mo add-ons'},
+    {name:'Coinbase One', was:29.99, now:4.99, note:'Reduced plan'},
+  ];
+
+  function fmtD(n){ return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+
+  function loadWins(){
+    try{ return JSON.parse(localStorage.getItem(LS)) || DEFAULT_WINS; }
+    catch(e){ return DEFAULT_WINS; }
+  }
+  function saveWins(w){ try{ localStorage.setItem(LS, JSON.stringify(w)); }catch(e){} }
+
+  function renderWins(){
+    var wins = loadWins();
+    var tbody = document.getElementById('wins-body');
+    var badge = document.getElementById('wins-total-badge');
+    if(!tbody) return;
+    var totalSaved = wins.reduce(function(s,w){ return s + Math.max(0, w.was - w.now); }, 0);
+    if(badge) badge.textContent = fmtD(totalSaved) + ' saved / mo  ·  ' + fmtD(totalSaved*12) + ' / yr';
+    tbody.innerHTML = wins.map(function(w, i){
+      var saved = Math.max(0, w.was - w.now);
+      var tag = w.now === 0
+        ? '<span style="background:#d4edda;color:#2e7d32;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">KILLED</span>'
+        : '<span style="background:#fff3cd;color:#b26a00;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600">REDUCED</span>';
+      return '<tr style="border-bottom:1px solid var(--border)">'
+        + '<td style="padding:8px">' + tag + ' <strong>' + w.name + '</strong>'
+        + (w.note ? '<div style="font-size:11px;color:var(--muted);margin-top:2px">'+w.note+'</div>' : '')
+        + '</td>'
+        + '<td style="padding:8px;text-align:right;color:var(--muted);text-decoration:line-through">'+fmtD(w.was)+'</td>'
+        + '<td style="padding:8px;text-align:right;font-weight:600">'+(w.now===0?'<span style="color:var(--green)">$0</span>':fmtD(w.now))+'</td>'
+        + '<td style="padding:8px;text-align:right;color:var(--green);font-weight:700">'+fmtD(saved)+'</td>'
+        + '<td style="padding:8px;text-align:right;color:var(--green)">'+fmtD(saved*12)+'</td>'
+        + '<td style="padding:8px;text-align:center"><button onclick="deleteWin('+i+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px" title="Remove">&#10005;</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.addWin = function(){
+    var name = (document.getElementById('win-name').value||'').trim();
+    var was  = parseFloat(document.getElementById('win-was').value) || 0;
+    var now  = parseFloat(document.getElementById('win-now').value) || 0;
+    if(!name || was === 0){ alert('Enter a subscription name and the old monthly cost.'); return; }
+    var wins = loadWins();
+    wins.push({name:name, was:was, now:now, note:''});
+    saveWins(wins);
+    document.getElementById('win-name').value = '';
+    document.getElementById('win-was').value  = '';
+    document.getElementById('win-now').value  = '0';
+    renderWins();
+  };
+
+  window.deleteWin = function(i){
+    var wins = loadWins();
+    wins.splice(i,1);
+    saveWins(wins);
+    renderWins();
+  };
+
+  if(window.FD_LIVE_READY && typeof window.FD_LIVE_READY.then==='function'){
+    window.FD_LIVE_READY.then(renderWins);
+  } else {
+    document.addEventListener('DOMContentLoaded', renderWins);
+  }
+})();
+/* ── END SAVINGS WINS ──────────────────────────────────────────────── */
 
 })(); // end analytics module
 </script>
