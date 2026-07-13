@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Financial Dashboard",
+  "schemaVersion": 1,
+  "description": "Personal financial dashboard: bill tracking with bank auto-detection and recurring-charge suggestions, categorized spending with a review queue for uncertain payees, and net worth over time. Bank data via SimpleFIN."
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>window.FD_BANK={"fetchedAt":"2026-07-13","org":"Acorns / Capital One / GEICO Car Insurance / Self Financial Inc. / Thrift Savings Plan / Truist","accounts":[{"id":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","name":"Capital One 360 Performance Savings (6983)","type":"savings","balance":1.3},{"id":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","name":"Capital One 360 Checking (9107)","type":"checking","balance":1364.24},{"id":"ACT-d15fed16-8eb9-4316-8fdc-369567f04afe","name":"Thrift Savings Plan Fund Performance","type":"investment","balance":79148.17},{"id":"ACT-ac27dcbe-b3fb-40d2-8c85-671f063d10f8","name":"Acorns Acorns Checking (7771)","type":"checking","balance":0.0},{"id":"ACT-22a76c52-2c1f-40d7-923b-20ae3d74f117","name":"Acorns Acorns Investing Account (aa3d)","type":"investment","balance":284.48},{"id":"ACT-31a289d6-2364-4770-9063-327187938bb9","name":"Acorns Traditional IRA (0375)","type":"investment","balance":266.05},{"id":"ACT-2f11331a-19de-4f49-8bb3-5e4762719e03","name":"Truist Checking 4212 (4212) - business","type":"checking","balance":495.4},{"id":"ACT-b7429054-ba9e-41c1-9dec-7fc43d351c81","name":"Truist Checking 4220 (4220) - business","type":"checking","balance":0.0}],"txs":[{"id":"TRN-56248cf0-fca3-4de5-8d4b-02d0ffcedde2","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-06-30","m":0.29,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-9c4f2d6f-3c96-4c42-a215-301c8aea2fdc","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-06-17","m":-500.0,"p":"Withdrawal to 360 Checking Account 9107","s":"Withdrawal to 360 Checking XXXXXXX9107"},{"id":"TRN-b465641a-1754-41b5-91e5-8b536e862e21","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-06-12","m":-500.0,"p":"Lead Bank Self Lend","s":"LEADBANKSELFLEND"},{"id":"TRN-2719d9ef-0d51-4aec-9766-c918a94a4cca","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-06-12","m":1000.0,"p":"Deposit From Checking","s":"Deposit from 360 Checking XXXXXXX9107"},{"id":"TRN-15d1175f-f483-40da-bf82-f1d42643ab48","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-05-31","m":0.02,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-8e99f077-fc04-49f4-a12d-98bc895ab2d8","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-05-19","m":-13.0,"p":"Withdrawal to 360 Checking Account 9107","s":"Withdrawal to 360 Checking XXXXXXX9107"},{"id":"TRN-e19630db-1461-4d41-8aa0-37896d12a8aa","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-04-30","m":0.08,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-43b6859f-e134-42f4-b3a4-6c72312cce37","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-04-17","m":-586.62,"p":"Lead Bank Self Lend","s":"LEADBANKSELFLEND"},{"id":"TRN-dd657618-51b1-4211-9887-2e5548cd7950","a":"ACT-6cf3f919-54b1-4d94-9074-bcf438ec6be1","d":"2026-04-17","m":590.0,"p":"Deposit From Checking","s":"Deposit from 360 Checking XXXXXXX9107"},{"id":"TRN-0e3f20ea-5670-48f0-9f65-53c54b936944","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-13","m":-4.65,"p":"Supercharger","s":"TESLA  INC  SUPERCHARG"},{"id":"TRN-1ff9f338-b418-4222-82e1-481aa30c972a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-13","m":-23.82,"p":"Cantlers Riverside","s":"TST CANTLERS RIVERSIDE"},{"id":"TRN-973e3574-8da0-4059-93df-3cbdba54ff94","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-13","m":-61.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-a2f8e685-7d0b-4575-a4b5-51c2176b1c8f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-13","m":-12.71,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-610ee97c-530c-4942-a5af-0ba9c081e712","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-13","m":-69.97,"p":"Amazon","s":"Amazon"},{"id":"TRN-7745503c-ed09-47a5-8a84-a68885a671d4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-12","m":-203.5,"p":"Self","s":"Self Lender"},{"id":"TRN-3ebc16c1-20c3-4b33-8cc2-ac58e3bae1e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-12","m":30.39,"p":"Amazon","s":"360 Checking Card Adjustment Signature (Credit) AMAZON MKTPLACE PMTS AMZN COM BI"},{"id":"TRN-eae65861-25c5-47e2-a5af-c8fed4836246","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-12","m":-15.9,"p":"Link Com Simplefin","s":"LINK COM  SIMPLEFIN BR"},{"id":"TRN-fce39d58-c35b-47ba-bc06-e6717d6029a3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-12","m":-113.12,"p":"Choptank Annapol","s":"TST  CHOPTANK   ANNAPOL"},{"id":"TRN-4150b99d-3fb0-4129-8b7d-e6228e6c5ed1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":34.0,"p":"XXXXXXXXXXXXXXXX","s":"XXXXXXXXXXXXXXXX"},{"id":"TRN-3423a38d-671b-4ed6-8dad-d52083620cd5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":64.35,"p":"XXXXXXXXXXXXXXXX","s":"XXXXXXXXXXXXXXXX"},{"id":"TRN-b87d55b5-873e-48cf-91a9-5a357108dc67","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":-6.45,"p":"HONK","s":"HONK PARKING"},{"id":"TRN-53da75b9-9346-4c62-80fe-caaabac5aa29","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":-38.16,"p":"Websit","s":"SQSP  WEBSITXXXXXXXXXX"},{"id":"TRN-5ddb8739-e9aa-4662-a1d0-2af7ef9fea1b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":-9.72,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-8b140a84-9ac2-497b-a9e5-15f25ec0d915","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-11","m":-6.49,"p":"Chat","s":"CALL ME CHAT"},{"id":"TRN-85f9ea2e-097e-4f03-ac56-8dd296ff8450","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-eb59c366-495e-4e61-b3d8-344aab7f36b6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-0f7c2e25-fd6a-4ca8-93d6-c4634d9ecb16","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":981.31,"p":"FSA Reimbursement","s":"FSAREIMBURSEMENT"},{"id":"TRN-f5fbeff4-9734-49d8-9794-cd48279cce3a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-105.29,"p":"Verizon","s":"VERIZON"},{"id":"TRN-37c9b3d5-ba08-4ccd-bbcd-45b53f097108","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-29.99,"p":"Coinbase","s":"COINBASE INC."},{"id":"TRN-87e0366f-0651-4938-a21b-95b782d6fe53","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-96.95,"p":"Positano Ristorant","s":"TST POSITANO RISTORANT"},{"id":"TRN-c966c9ea-253d-4a53-bbd2-c0d802105762","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-84.0,"p":"Amazon","s":"Amazon"},{"id":"TRN-ed52fbd9-a6a6-43fd-99e0-bd3982f9dc36","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-10","m":-25.19,"p":"eBay","s":"eBay"},{"id":"TRN-79cd85a7-e586-40f4-b54d-b8d80b09d1b0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-12.9,"p":"US Postal Service","s":"USPS"},{"id":"TRN-1439b670-3e2c-4cae-8f85-2f8bae7577a8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-24.37,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-d807034e-6b66-4060-8141-e7d825e9a470","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-12.72,"p":"PayPal: Washington Post","s":"PAYPAL to STEVEN NOVAK / Washington Post"},{"id":"TRN-7c983e16-1cc5-41bf-be2e-94f2e00907a3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-b21000fd-084a-4030-9c63-891118dd652b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-4.23,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-c05f72bf-40af-4626-a126-9c97a84aa61a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-16.25,"p":"Amazon","s":"Amazon"},{"id":"TRN-dad54444-1923-4821-91b2-f6e325f1ef83","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-09","m":-18.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-5a33bd0a-3c36-47f2-91de-e30043eee06e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-29.98,"p":"Amazon","s":"Amazon"},{"id":"TRN-142f0b75-7795-4f29-9a12-a991b9b1de90","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-25.19,"p":"Mod Pizza","s":"MOD Pizza"},{"id":"TRN-b9b9c2bf-9412-4e06-a9f2-a6bd1049245d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-28.97,"p":"Amazon","s":"Amazon"},{"id":"TRN-b6011942-2b9c-4779-a6db-f016fcd34f5e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-84.79,"p":"eBay","s":"eBay"},{"id":"TRN-b3b71801-0e29-48f9-a324-2265e0e153b6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-32.22,"p":"eBay","s":"eBay"},{"id":"TRN-bbf8c981-1591-4670-990c-279ab4806145","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-28.19,"p":"eBay","s":"eBay"},{"id":"TRN-cf8daf47-e40d-401b-86a0-dc616e21f728","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":98.25,"p":"PayPal","s":"PAYPAL"},{"id":"TRN-bb73593c-4efd-4a6d-8d69-b610dd8ab8d5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-2802.64,"p":"Marriott Resort","s":"MARRIOTT RESORTS"},{"id":"TRN-417ad12f-bce7-42d0-9ac6-8661831dce8a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-550.0,"p":"Baltimore Gas & Electric","s":"BALTIMORE GAS AN"},{"id":"TRN-317348cf-d7f0-4fd8-ba38-0df816a1ac61","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-11.65,"p":"PayPal: X8742 Premium (monthly)","s":"PAYPAL to STEVEN NOVAK / X8742 Premium (monthly)"},{"id":"TRN-773464a8-a7de-4c96-a074-ff3e32452aff","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":59.99,"p":"Amazon","s":"360 Checking Card Adjustment Signature (Credit) AMAZON MKTPLACE PMTS AMZN COM BI"},{"id":"TRN-654dcb86-9eac-4abc-83f1-053c5f0e15bc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-12.49,"p":"Lithuania Lovelica","s":"LITHUANIA  LOVELICA"},{"id":"TRN-4371e777-aacf-4bfb-aaa1-3bcc2062d3a1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-6.49,"p":"Lithuania Lovelica","s":"LITHUANIA  LOVELICA"},{"id":"TRN-898fa45f-d8ae-46c1-99ff-99cc4b0134b9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-6.99,"p":"Lithuania Lovelica","s":"LITHUANIA  LOVELICA"},{"id":"TRN-11a849c9-aab6-4f82-9520-9f8ccdfa1241","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-63.88,"p":"Amazon","s":"Amazon"},{"id":"TRN-7bc7d794-f922-4c61-bbac-b267a0882cbd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-08","m":-17.45,"p":"Amazon","s":"Amazon"},{"id":"TRN-82c36b16-9ce6-4908-a2a5-f3d74cc3b4b8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-140.0,"p":"Lucia Del Carmen Coto Granados","s":"LUCIA DEL CARMEN COTO GRANADOS"},{"id":"TRN-cbcbd522-1fa8-4b3a-8967-f99b5d5cff4b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":90.43,"p":"Thrift Saving Plan Payment","s":"TSP  TREAS 310"},{"id":"TRN-e6398821-a24a-423e-8e33-f093616c02ab","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":900.0,"p":"Wealthfront","s":"WEALTHFRONT BROKERAG"},{"id":"TRN-7b42da5d-77d4-4fa5-8f39-a48fcffe6f40","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-9.99,"p":"PayPal: DoorDash DashPass","s":"PAYPAL to STEVEN NOVAK / DoorDash DashPass"},{"id":"TRN-07c805e1-7f67-4bba-b60e-09669ba88668","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-51.5,"p":"OpenAI","s":"OPENAI  CHATGPT SUBSCR"},{"id":"TRN-99eb29ab-32bb-4db2-8fb1-9d37a212a4e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-127.28,"p":"Instacart","s":"Instacart"},{"id":"TRN-843cbe8f-a862-4b5c-ac60-d4d48f9347b9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-10.57,"p":"Wawa","s":"Wawa"},{"id":"TRN-228ac324-93f3-4afb-9a01-20849c439936","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-14.85,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-6445d968-bdf9-4514-bdf6-9d90be200b11","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-4.01,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-39850564-56ec-4aa5-a850-4c48bd5a91bb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-95.97,"p":"Amazon","s":"Amazon"},{"id":"TRN-6f063772-d9ed-48a5-b1e6-5300476c4423","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-07","m":-85.76,"p":"Capriotti's Sandwich Shop","s":"DD  CAPRIOTTISSANDWICH"},{"id":"TRN-3f42e0a3-8f69-42b2-b657-393c30d8b43d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-14.38,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-9690a1ff-25dd-49fc-981f-3050cb943389","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-125.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-980f6a41-00ba-4554-beea-fe294c8a1497","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-6.0,"p":"Subscription","s":"Subscription"},{"id":"TRN-c0742261-fb05-4f9e-acc3-46753015c5c9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-28.5,"p":"eBay","s":"eBay"},{"id":"TRN-c77d4ca6-d737-4f5e-912c-d89795b3f8e1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-74.88,"p":"eBay","s":"eBay"},{"id":"TRN-7ee897b7-881f-4a17-9358-80b57b609939","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-13.82,"p":"Supercharger","s":"TESLA  INC  SUPERCHARG"},{"id":"TRN-c5b36865-b10a-44d7-8750-fab5ccd5bd2b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-5.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-259d4234-5f6c-4804-8cac-943ca0ed6403","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-26.0,"p":"Cape Wine & Spirits","s":"Cape Wine & Spirits"},{"id":"TRN-a8de44f9-0b55-42ae-b1aa-2afd2709c6e1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-06","m":-22.97,"p":"Wawa","s":"Wawa"},{"id":"TRN-c10973fe-6dc0-4470-9315-612d571ad73a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-67.59,"p":"Michaels","s":"Michaels"},{"id":"TRN-729a1f88-6fe1-4b69-b0df-119d62d0f80c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-4.02,"p":"Highs of Baltimore","s":"HIGHS 71"},{"id":"TRN-8df8fa42-f275-4559-8aa8-34a59116de8e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-20.57,"p":"CVS","s":"CVS"},{"id":"TRN-4554e211-1a81-4ab8-915f-9b0028ed8392","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-32.49,"p":"Mayo Edgewater","s":"CPP MAYO EDGEWATER EFT"},{"id":"TRN-73d99f8e-454c-4760-967e-6bb500253cd0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-58.49,"p":"Docs Riverside Gri","s":"TST DOCS RIVERSIDE GRI"},{"id":"TRN-30c9364b-603e-4e73-99e2-59c3b903e064","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-7.3,"p":"Wawa","s":"Wawa"},{"id":"TRN-81121777-1d7e-4d6d-a264-160de696f62e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-11.02,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-362deb98-16ef-4887-b15b-94ef834d57ed","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-12.76,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-88979aa0-9cf4-481b-bfe9-ae144c22cfe6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-05","m":-2.89,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-841dc433-a412-434e-8c99-ef86f9775c00","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-04","m":2100.0,"p":"Wealthfront","s":"WEALTHFRONT BROKERAG"},{"id":"TRN-2f9d65b5-d703-4722-b6fe-c2bee66e37aa","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-04","m":-19.99,"p":"Plushcare","s":"PLUSHCARE 855 559 2285"},{"id":"TRN-57e71e0a-d7c3-4d49-9792-e1adac03a39c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-04","m":-104.94,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-0a48074b-ff72-4908-b3b1-3cdb7fa10a6b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-04","m":-14.19,"p":"Highs of Baltimore","s":"HIGHS 48"},{"id":"TRN-685a0bdc-7eeb-4469-bf20-32ba3780a49e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-a7f17dfe-7c1d-4cfa-8959-5a8fd2edce6c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-2499a888-19cc-425c-bb5e-dac5a4f7681f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-551.44,"p":"T-Mobile","s":"T-MOBILE"},{"id":"TRN-5c7ec4e4-5e8a-44f5-9846-21e2a4ef2e0c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-9.24,"p":"Supercharger","s":"TESLA  INC  SUPERCHARG"},{"id":"TRN-ae284079-ea41-46f5-ab6e-bf2b873ec3dc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-68.68,"p":"Positano Ristorant","s":"TST POSITANO RISTORANT"},{"id":"TRN-5a0b541d-df36-416f-9bb2-04bcdc3b99b2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-3.45,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-90384045-2743-45b5-a35b-ccd311216438","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-500.0,"p":"Marriott Hotel","s":"Marriott Hotel And Resorts"},{"id":"TRN-e8fd7ed6-3ef9-418d-9785-c2c9808ca7db","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-34.3,"p":"Weis Markets","s":"Weis Markets"},{"id":"TRN-c8799c06-e062-43f9-b72b-df4bcce5478a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-03","m":-134.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-5012895c-502c-4f40-9055-5d530f6e1f7f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-63.82,"p":"Defense Hwy Gas","s":"DEFENSE HWY GAS AND CS"},{"id":"TRN-654110a4-5d8e-47e4-8f9d-b04c3498cc68","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-22.77,"p":"7-Eleven","s":"7-Eleven"},{"id":"TRN-8e853e6a-f48d-4c90-8a2e-07a823ac5d0d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-81.58,"p":"PayPal: Google Workspace (tech-d-enterprise.com)","s":"PAYPAL to STEVEN NOVAK / Google Workspace (tech-d-enterprise.com)"},{"id":"TRN-a895a3ed-0cfa-418f-b6c1-7e2b1543c128","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-23.3,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-eb292301-ec1e-4681-a4fe-4e066f1dea6b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-716.63,"p":"Marriott Vacation Club","s":"MARRIOTT MVC"},{"id":"TRN-4e2889fe-8117-4fc3-85ce-6a2dcc1919c4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-762.44,"p":"Chase Auto Finance (CAF)","s":"CAF DIRECT CHECK / Chase Auto Finance"},{"id":"TRN-60e3e4f8-2918-4999-a0ab-5bec9a04dd3c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-15.0,"p":"Sam's Club","s":"Sams Club"},{"id":"TRN-c19d0c0a-45ad-439b-8090-07835f44f4df","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-5.14,"p":"eFax","s":"CCSI EFAX"},{"id":"TRN-cb4faa1c-22b2-48df-b68f-525ee398c978","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-02","m":-10.6,"p":"Humblefax","s":"HUMBLEFAX"},{"id":"TRN-2853d443-74e1-45a9-bb93-a2d131cbd5e7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-01","m":-10.29,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-fc1f8ebe-235b-4d1e-9059-9ffeeab5f630","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-01","m":-18.05,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-1fcbafb7-f0fd-4e80-963d-a2fa7146af27","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-01","m":-10.0,"p":"Mayo Edgewater Trip","s":"CPP MAYO EDGEWATER TRIP"},{"id":"TRN-564c38b1-2ce0-4409-9629-e60d637f200a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-07-01","m":-155.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-eb003e7d-0f2d-4ef3-bada-5ad76c2fcfa4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-30","m":0.25,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-a193c956-d3c9-4edd-be0c-7160745555ee","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-30","m":4942.13,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-1074f3f5-93ad-4863-8c23-a224ca529db6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-30","m":-42.35,"p":"Fico","s":"FICO"},{"id":"TRN-8face57d-08e2-4d6b-ad5d-7b7ae7550f6f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":147.38,"p":"Transfer from Venmo","s":"VENMO"},{"id":"TRN-731e21f7-5c85-4452-8240-136be4680525","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":-520.9,"p":"Thrift Sav Plan","s":"THRIFT SAV PLAN"},{"id":"TRN-4153a9d2-ffd0-4358-b483-915e9ebfe91e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":-30.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-c7d792e5-8e30-49c6-b091-ef3dbb5ddfd5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":-25.43,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-e88f8735-273b-4296-8a6b-11a013013116","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":-13.49,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-16be811f-25f2-4eba-9126-ece028f71c47","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-29","m":-20.37,"p":"Amazon","s":"Amazon"},{"id":"TRN-820536a9-fcbd-4dae-b959-6e42119806be","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-28","m":196.5,"p":"Transfer from Venmo","s":"VENMO"},{"id":"TRN-a88d2ac4-e892-4eba-9b8c-24398569fe81","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-28","m":-169.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-6bc001ec-addd-403a-9dd6-5bbabdeeef6e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-28","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-ecb0989a-dd9b-49e0-ab6c-56a74f475ff4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-28","m":-8.95,"p":"New Carrollton Garage","s":"New Carrollton Garage"},{"id":"TRN-0bcb3d93-919a-4adb-9412-73e1405e5dde","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-28","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-bcfa348a-57c7-458f-843d-d82c67b41e7f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-70.61,"p":"Novasushibarasianfusion","s":"NOVASUSHIBARASIANFUSION"},{"id":"TRN-0d3ac9f7-78a6-4ce0-a8e0-f762535fd8b9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-31.32,"p":"Market Basket Pentago","s":"MARKET BASKET   PENTAGO"},{"id":"TRN-4504b085-dfbe-4620-a0a4-d667f94e4ca8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-20.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-6029d1f1-fe6c-462a-9b01-a75bfcfe5fbc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-5.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-d9b66419-13cc-435a-9acf-d7084a7c52b7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-169.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-fe805715-a6ba-4103-a203-792fcd1c01c8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-20.0,"p":"ZenBusiness","s":"ZENBUSINESS"},{"id":"TRN-2d8f9197-7162-4fa6-b410-ac28a03c5ab2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-4.28,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  337643 Q35"},{"id":"TRN-fd420466-aa92-4481-93f7-9c3af0d58973","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-123.82,"p":"Amazon","s":"Amazon"},{"id":"TRN-0e0ee3b1-f89a-46c8-90e3-2504144db92e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-5bb3d0e6-9afd-47b8-b487-36f2f8c1fefb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-117.15,"p":"Federal House Bar","s":"TST FEDERAL HOUSE BAR"},{"id":"TRN-d7db2b86-d46c-406b-8091-d43e3b82aca1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-113.95,"p":"Amazon","s":"Amazon"},{"id":"TRN-0f4c1286-e460-4622-b8af-acc4cf9079c2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-8.95,"p":"New Carrollton Garage","s":"New Carrollton Garage"},{"id":"TRN-4f2d94b7-371f-4c4d-a929-2644b2ed545e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-8cd79955-ea12-403c-8b1b-7daa734bc7b4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-27","m":-12.15,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-81fdc8c9-6a43-4f4d-a324-83ca6eda81ad","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-6309f73b-c806-4ee6-b77f-f066dfeee5b3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-75.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-f100145a-49d0-4556-a345-11748a0d8d65","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-7c3ddbb3-75ea-4ae7-9ecf-7e6999bc5029","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-9f550a01-cad2-43c0-b2a2-32a5a20cc4b2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-250.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-f4cec399-75f9-497a-82df-dc19d458b98e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-19.99,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-687bcf65-1282-4f97-9f23-714cb4f87c11","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-11.55,"p":"HONK","s":"HONK PARKING"},{"id":"TRN-2946cd8b-763d-4ae0-b123-f30aaa7aa380","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-4.28,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  337643 Q35"},{"id":"TRN-27c56a7a-e9b2-45cd-84c9-020437c8125e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-7.35,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  337643 Q35"},{"id":"TRN-ff9757f6-93a5-46c6-a5d9-1d2d6270e31a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-ce6ec1ef-6f93-43e0-a8c8-82d12cfd0cb3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-34.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-24c84c00-693d-453c-a962-ab09cc052308","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-26","m":-8.95,"p":"New Carrollton Garage","s":"New Carrollton Garage"},{"id":"TRN-1b120dff-4087-4566-84b9-a21ce7bc15f5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":400.0,"p":"Wealthfront","s":"WEALTHFRONT BROKERAG"},{"id":"TRN-7644a644-1868-4e70-b47f-6a9dd201cdd4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-0e680f39-30bc-4500-b5aa-9ba92a917bc8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-9.08,"p":"Market Basket Pentago","s":"MARKET BASKET   PENTAGO"},{"id":"TRN-a03ceeb3-8019-4e28-be0f-4e935cf524e8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-4.28,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  337643 Q35"},{"id":"TRN-dd3f855c-bce6-49c8-98b4-780b28a682e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-8.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-72ac626b-5999-4375-b862-40dcec0bfe6c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-11.01,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-846b310a-c719-4e38-b843-8eea35d58871","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-25","m":-22.98,"p":"Amazon","s":"Amazon"},{"id":"TRN-57eaec01-c593-458f-977f-3b09b225aa2b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-24","m":-900.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-9996b999-0200-4ca1-a88b-1de2a60f65a5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-24","m":-75.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-7b78c39d-5a80-4109-b0cc-e29ff0edbb76","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-24","m":-40.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-e8e4f5d6-6721-4c18-b24b-1c7cdb24c9df","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-24","m":-32.49,"p":"Mayo Edgewater","s":"CPP MAYO EDGEWATER EFT"},{"id":"TRN-75dc8a4f-fa45-46ff-9a6f-58c5a2d4101a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-24","m":-11.6,"p":"7-Eleven","s":"7-Eleven"},{"id":"TRN-0a81eb2b-abd9-4c35-850d-258b0bed3c4d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-20.13,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-d8fad615-5bc2-4c89-b9d7-9e9353323d68","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-5.52,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-cc405137-52e4-454b-89ba-e697d885f63f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-250.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-471cf211-fe4a-4f97-bacf-4f83458b5772","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-21.98,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-ded5d2de-425f-4939-9e32-243abcd53406","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":73.8,"p":"StubHub!","s":"STUBHUB CONS"},{"id":"TRN-8bb0d6b0-713a-46ec-8462-560147e2a67d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-14.95,"p":"PayPal: Spokeo","s":"PAYPAL to STEVEN NOVAK / Spokeo"},{"id":"TRN-7a490c81-a740-48d1-87d1-361925e7c619","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-109.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-7319ad61-ec29-4611-ac35-191bd4247222","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-9.1,"p":"Wawa","s":"Wawa"},{"id":"TRN-18c5e407-549b-4146-a944-6249b6e2cf54","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-9.03,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-bcc48b0c-4a2e-41de-8ceb-f509454a349d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-23","m":-133.04,"p":"Weis Markets","s":"Weis Markets"},{"id":"TRN-a88a2520-f6b2-418a-93c8-81b0e172bd5f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-76.31,"p":"PayPal: YouTube TV","s":"PAYPAL to STEVEN NOVAK / YouTube TV"},{"id":"TRN-68498972-2110-4463-941e-119c9005c16f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-50.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-7176fc3e-f7c0-46b9-a686-5babb94b0c43","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-158e93e2-35a1-4587-b33d-287f5513d479","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-34.97,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-1a424cb2-7a03-4947-a136-76898e77cb8f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-30.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-80ecb17d-0d44-4b9e-99b4-dbceb1b97076","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-95200a9c-ea96-4056-b42c-68b877d9d5ba","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-3.18,"p":"Rocket Money","s":"Rocket Money"},{"id":"TRN-0bf7251e-b917-4ec2-a779-dfda2fb3c8b2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-3.17,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-5b4b3637-43f5-4e36-963b-bbbaacc04ab6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-516.16,"p":"Department of Education","s":"DEPT EDUCATION"},{"id":"TRN-8c124b38-94ac-430f-a0ba-4a2cbf66ad42","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-20.0,"p":"Bark Subscription","s":"BARK US SUBSCRIPTION"},{"id":"TRN-b2756022-bb88-42f4-9b3b-a6cb87f0cc62","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-19.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-ad261958-cb34-47f5-b819-6e1e2da38eeb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-300.0,"p":"Lead Bank Self Lend","s":"LEADBANKSELFLEND"},{"id":"TRN-3c6a233f-9b9b-45ac-8200-1fc42572086d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-81.58,"p":"PayPal: Google Workspace (tech-d-enterprise.com)","s":"PAYPAL to STEVEN NOVAK / Google Workspace (tech-d-enterprise.com)"},{"id":"TRN-f7e855e3-9a8e-4be7-b56e-44a1e89e5533","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-69.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-e92c42c7-5217-44eb-892b-ea1e6c28dc21","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-23.46,"p":"Amazon","s":"Amazon"},{"id":"TRN-9428f8cf-335d-4ee2-afd9-0c68bba32b5b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-21.0,"p":"Amazon","s":"Amazon"},{"id":"TRN-770071b8-4cfb-43f0-b91a-71a61a12a307","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-5.11,"p":"Royal Farms","s":"Royal Farms"},{"id":"TRN-69c0a597-f4bb-450d-b6ff-e2c12faeaffd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-22","m":-17.65,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-7df14b1f-170c-48b4-bc04-766f684ae584","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-44.98,"p":"Amazon","s":"Amazon"},{"id":"TRN-6c4182c8-b34f-46b4-a1ee-0e6b49935af6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-22.39,"p":"Ramblewood Golf","s":"LS RAMBLEWOOD GOLF"},{"id":"TRN-c6543245-dd23-43d5-a521-0cc6aa7ee2ce","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-9.2,"p":"The Station on Kin","s":"TST  THE STATION ON KIN"},{"id":"TRN-528d7dc8-5a14-4446-a898-9b267394ccb9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-14.95,"p":"The Station on Kin","s":"TST  THE STATION ON KIN"},{"id":"TRN-f3dede8c-c709-40ba-84e7-a221a78a8987","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-25.0,"p":"Transfer to Apple Pay","s":"APPLE CASH BALANCE ADD"},{"id":"TRN-7ab9e512-fe0d-405b-a1d7-c002d2a0dc6b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-169.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-ad6faf9b-0a37-4305-abff-4aefd78e8e80","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-21","m":-14.06,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-d6cb817e-27f7-4f1d-9301-0623173a0ba8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-20","m":-20.12,"p":"Target","s":"TARGET T 1004"},{"id":"TRN-86609651-6bc3-449a-b799-fa35cdbbb7b4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-20","m":-11.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-abc1d361-4377-40c1-ad2f-4f7cfc4422f3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-20","m":-57.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-54cbedd0-8a1e-4717-a7fc-6ea7c9e01068","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-20","m":-19.35,"p":"Supercharger","s":"TESLA  INC  SUPERCHARG"},{"id":"TRN-475a7499-ec35-4340-970b-3ca9a32b2fcb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-20","m":-79.95,"p":"Amazon","s":"Amazon"},{"id":"TRN-6e549db0-1137-48e4-97f2-d6369f0af87b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-19","m":-88.0,"p":"HomeGoods","s":"HomeGoods"},{"id":"TRN-248005e1-4fea-472a-bc84-364b4b5ad48c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-19","m":-6.95,"p":"Self Financial Inc","s":"SELF FINANCIAL INC"},{"id":"TRN-bf5b25db-f174-4924-b92e-3c25a39ee761","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-19","m":-49.95,"p":"Self Financial Inc","s":"SELF FINANCIAL INC"},{"id":"TRN-5616e88d-6f66-4c9a-b340-3dc850267710","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-19","m":-30.0,"p":"Plushcare","s":"PLUSHCARE 855 559 2285"},{"id":"TRN-094a4b5f-8080-4eb0-9c40-92d8aab7a36b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-19","m":-15.08,"p":"Ziki Japanese Stea","s":"TST ZIKI JAPANESE STEA"},{"id":"TRN-46f89f2f-73f4-43a8-a3cb-a98bb88bf528","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":80.0,"p":"Kalshi","s":"Kalshi"},{"id":"TRN-0da00499-df8b-44ec-ba0a-50be02953712","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":225.0,"p":"Wealthfront","s":"WEALTHFRONT BROKERAG"},{"id":"TRN-5d59871d-c8c9-435c-ab79-3f32c2a9b344","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":-9.99,"p":"PayPal: DoorDash DashPass","s":"PAYPAL to STEVEN NOVAK / DoorDash DashPass"},{"id":"TRN-95fa0b77-543c-40c8-aeeb-843375ff5b47","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":5101.08,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-e7394da2-1ae6-422b-b6c4-9a2a2d0eb621","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":-3.13,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-2e76912f-0c75-4998-b84a-6ad2f04c7329","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-18","m":-5.99,"p":"UPS","s":"United Parcel Service"},{"id":"TRN-0697db4b-9b7d-4a04-86e8-1fa5d3852c7e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-50.61,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-af4d0e22-ef9e-4870-9cbd-eed2833e9907","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-299.99,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-d22970f8-7eb1-4f9f-9854-be80b151681e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":500.0,"p":"Deposit From Performance Savings","s":"Deposit from 360 Performance Savings XXXXXXX6983"},{"id":"TRN-16455f79-b798-4086-9db3-d3bec3f78ba7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-14.95,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-f70b7a2a-6bbb-488e-8465-08018aa167cd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-74.72,"p":"Petco","s":"Petco"},{"id":"TRN-b4c5f3de-e105-41dc-a8a0-2e36dab37474","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-29.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-e48ae1ba-9246-48b3-8e95-611302e31a1f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-10.87,"p":"Amazon","s":"Amazon"},{"id":"TRN-6b644846-1030-46ec-83e1-7e680e0f5fae","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-17","m":-31.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-ed2a1e7f-9ff7-4b66-8090-512d18915428","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-57.18,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-8c38d2bc-0b66-4c1c-8ada-4358bacab12e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-837.29,"p":"Marriott Vacation Club","s":"MARRIOTT MVC"},{"id":"TRN-a732372c-83f6-4136-bc95-6dd2fe0d67a4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-6.35,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-d5ebb3da-0d13-4e64-9226-94302a658978","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-62.99,"p":"Geico","s":"GEICO"},{"id":"TRN-a14ecc11-f3fa-4e21-8bef-93ad827b118e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-30.0,"p":"Transfer to Apple Pay","s":"APPLE CASH SENT MONEY"},{"id":"TRN-654fd7ea-8d0a-43ab-bd01-0d16cbe06583","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-166.1,"p":"Trading","s":"LH TRADING"},{"id":"TRN-d21e7eaa-f73d-4a0d-9e12-53ca36569d99","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-12.81,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-509f178c-e449-48bb-bc69-bc2a8dc28daa","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-244.65,"p":"Costello's Ace Hardware, Home & Garden","s":"COSTELLO S ACE  16663 E"},{"id":"TRN-765537de-e317-4e38-b04a-57a7b07b470b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-76.94,"p":"Amazon","s":"Amazon"},{"id":"TRN-de5e5313-5f95-421b-b34c-89f4beca234a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-161.98,"p":"Costello's Ace Hardware, Home & Garden","s":"COSTELLO S ACE  16663 E"},{"id":"TRN-a103e219-e6c9-4ef5-b19a-b7af8a21728c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-14.58,"p":"Safeway","s":"Safeway"},{"id":"TRN-54093ca7-ba82-4a73-9343-cc8ae04d0ff3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-16.89,"p":"Levy Nationals Park","s":"LEVY 2NATIONALS PARK"},{"id":"TRN-009721c7-b0bf-4c04-8800-95f6445d0b45","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-37.93,"p":"Levy Nationals Park","s":"LEVY 2NATIONALS PARK"},{"id":"TRN-0d20bc98-6cbe-45f9-972f-696227b4e700","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-6.5,"p":"Levy Nationals Park","s":"LEVY 2NATIONALS PARK"},{"id":"TRN-babb8929-76ba-4d73-af4f-9dda6189b5b6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-16","m":-22.08,"p":"Levy Nationals Park","s":"LEVY 2NATIONALS PARK"},{"id":"TRN-6e221310-7055-4343-adc9-bfeccf82faf0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-71.86,"p":"Klarna","s":"KLARNA"},{"id":"TRN-8ee08b36-46c2-4461-909f-f249c06282ea","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-49.86,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-9d2a1c79-d531-4b8b-87b4-e97a8fac1e48","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-21.19,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-7903580b-340b-4b8c-b7b7-f0b406fa26f4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-33.32,"p":"eBay","s":"eBay"},{"id":"TRN-e408039c-a6d8-4e31-9dec-8adfded8330d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-170.87,"p":"eBay","s":"eBay"},{"id":"TRN-d3efc856-34dd-47ad-bdf5-4267e35beed6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-27.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-bbb4160c-b1a1-450b-8589-fb6645aa0572","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-7.87,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-f1ca957f-5913-49a1-9235-44172c6da591","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-8.47,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-14f9f139-e13d-4cc2-877a-0b547085119b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-4.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-4566849d-ccbc-4c2a-a887-e623fc502505","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-7.68,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-ff53591a-b428-4c96-9035-66465e277fb1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-15","m":-9.96,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-4abcdb96-2b9f-48a9-8887-23c86f4f2f76","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-28.25,"p":"Paymentus","s":"PAYMENTUS CORPORATION"},{"id":"TRN-6a0eceea-7fe2-4b66-8de7-68c13dcb39d6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-1130.0,"p":"DC DMV","s":"DC DMV"},{"id":"TRN-09402681-8a44-417a-9e52-6f070f70eabd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-50.0,"p":"Transfer to Apple Pay","s":"APPLE CASH SENT MONEY"},{"id":"TRN-6e5b008d-02f3-4eea-a026-2a719f8ec98e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-59.84,"p":"Target","s":"TARGET T 2271"},{"id":"TRN-75c85601-d1e9-41df-bb02-5bfa853d1e59","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-156.35,"p":"Petco","s":"Petco"},{"id":"TRN-5ba52a74-5256-4e33-add3-a4b8f039669c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-14","m":-59.34,"p":"eBay","s":"eBay"},{"id":"TRN-dc59c826-0c2c-45e1-83ea-ce6c62ef8cbb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-13","m":-42.35,"p":"Fico","s":"FICO"},{"id":"TRN-5c9b131c-77e3-4f3c-a3d0-e5df1a5a0a13","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-140.0,"p":"Lucia Del Carmen Coto Granados","s":"LUCIA DEL CARMEN COTO GRANADOS"},{"id":"TRN-beca5596-6adf-446b-a589-202feea4273a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-5000.0,"p":"Wealthfront","s":"Wealthfront"},{"id":"TRN-9f723989-49de-4d01-8899-ed14a554b4b5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-10269d98-d1ee-4f69-b598-05ad105946ca","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-33.88,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-a62b5ac7-3b72-4205-94be-abab9d4fba00","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-8cd7ef80-d782-47d0-bae7-8562d1fc9b90","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-23.31,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-eaf44ad0-b468-4dfc-b96a-f41edf402cb8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-10.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-7b2d0a8c-46b9-4f56-8124-353d7777240a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":800.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-f5f59d3b-8e5b-4b6b-b42c-c8cbd3416926","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":500.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-571efeff-e07f-4e6b-aebe-1b77bab1a42f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-214.65,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-de13c98a-3517-47ba-9f50-c1af403a3f82","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-1000.0,"p":"Withdrawal to 360 Performance Savings Account","s":"Withdrawal to 360 Performance Savings XXXXXXX6983"},{"id":"TRN-c7f5854f-d7bb-4d06-a4d5-edca89547ea7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-16.71,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-58321a3a-752d-4255-a48b-acc5c5265f05","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-12","m":-6.35,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-d3a615ac-12b8-4b5c-a851-7e489e219109","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-38.16,"p":"Websit","s":"SQSP  WEBSITXXXXXXXXXX"},{"id":"TRN-c8e5e154-4d1a-4f15-8725-a278ecfb77b2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-6a801f56-fbde-42d7-b351-ed90a0ae2014","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":3427.52,"p":"Thrift Saving Plan Payment","s":"TSP  TREAS 310"},{"id":"TRN-5ba0a8ec-0935-4a60-88de-92faae98df1c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-18.68,"p":"Amazon","s":"Amazon"},{"id":"TRN-b6ab09d2-b7c3-4208-8a08-4b38a2bacbbd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":5689.67,"p":"Thrift Saving Plan Payment","s":"TSP  TREAS 310"},{"id":"TRN-5725be49-ed09-42c1-890e-a92ef453fd9a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-25.44,"p":"Paddle","s":"Withdrawal from 770510487C PADDLE.COM MARKET LIMITED PURCHASE"},{"id":"TRN-569c7811-c586-4973-a114-8f280919dcc4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-26.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-a963b116-cb20-40f6-9bdf-a6825996d2cf","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-12.72,"p":"PayPal: Washington Post","s":"PAYPAL to STEVEN NOVAK / Washington Post"},{"id":"TRN-622bd62d-90c6-4f36-a471-db575d98c8f8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-676.41,"p":"Marriott Vacation Club","s":"MARRIOTT MVC"},{"id":"TRN-41d527d3-e253-4ce0-9aba-77e6de73b8f7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-05e7166d-49e4-4d17-a747-37ac8e9d436a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-11","m":-6.97,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-ed2ae319-f6f1-48d4-b95c-1a8e7b5ce9d4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-94.76,"p":"Keratsini Greek Kitche","s":"Keratsini Greek Kitche"},{"id":"TRN-d8b36800-ce61-4fae-a58a-2d9a689f69f6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":98.25,"p":"PayPal","s":"PAYPAL"},{"id":"TRN-86fc5197-e54a-4e09-8aa3-a2b5d174c100","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-29.99,"p":"Coinbase","s":"COINBASE INC."},{"id":"TRN-8d6ed822-90aa-41de-9c88-6a039f95b854","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-24.07,"p":"Chipotle","s":"Chipotle"},{"id":"TRN-3b1b8ecb-2d90-4ffa-9dbe-ba26e1c69a28","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-4.23,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-6899077d-3ef8-4684-b24a-a4b95d4b7ce7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-97c063ec-bd20-485f-b472-a666c3e111a6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-41.1,"p":"Weis Markets","s":"Weis Markets"},{"id":"TRN-a333d92d-3def-497f-8bcf-44b4ff4b3278","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-20.49,"p":"Amazon","s":"Amazon"},{"id":"TRN-66f6d880-e836-476d-b4a8-d65d7a04a2c5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-10","m":-7.31,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-c092f043-32f8-4a84-9247-ef0dfb81a079","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-09","m":-50.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-08e531bd-9af7-4bd4-96d4-06c2d2e3a168","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-09","m":90.0,"p":"SeatGeek","s":"SeatGeek Marketp"},{"id":"TRN-64842494-5a4d-485b-9092-d03fa9ce445d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-09","m":-151.65,"p":"Instacart","s":"Instacart"},{"id":"TRN-75d0fa02-54f4-4aac-81a2-9bb3e3c21e26","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-59.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-188a9390-9bbe-437b-9090-9475545d3aa2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-155.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-de255b17-2f09-4b36-8e66-4b08e0b62971","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-134.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-4fc68f4d-d694-4be5-9406-257454e40459","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-3.81,"p":"7-Eleven","s":"7-Eleven"},{"id":"TRN-60469603-b12b-43b5-8d13-af75f887bac1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-530.61,"p":"T-Mobile","s":"T-MOBILE"},{"id":"TRN-f247746d-982e-484a-a041-990157ce48b4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-87.91,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-6f52daea-4cee-4bfe-9af8-7756a55155b4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-11.65,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-e77d4c10-6bc1-49bd-813c-0f624e9dd123","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-289.93,"p":"Carpaccio Tuscan","s":"TST CARPACCIO TUSCAN K"},{"id":"TRN-43aabaef-298b-4a76-a023-02b2f5a1957a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-227.37,"p":"Four Legs Animal Hospital","s":"Four Legs Animal Hospital"},{"id":"TRN-44c63018-be2c-4c9b-a049-ff0fa221fd1e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-3.97,"p":"Amazon","s":"Amazon"},{"id":"TRN-68c2f659-fa2b-4377-9dac-dbf16292ba75","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-29.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-46f1b6f4-52ab-4576-9796-2d5eede8f655","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-08","m":-10.81,"p":"Amazon","s":"Amazon"},{"id":"TRN-d9abcfbf-5f01-4521-8a7f-ec6417a7effc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-07","m":-35.1,"p":"Craz","s":"TST SWINGERS DC   CRAZ"},{"id":"TRN-bad87610-6fe3-4ebc-bfa8-e2253de55fb2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-07","m":-22.98,"p":"Amazon","s":"Amazon"},{"id":"TRN-1a0c6ebe-c7f0-4a56-bf28-864892e87a83","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-07","m":-32.49,"p":"Mayo Edgewater","s":"CPP MAYO EDGEWATER EFT"},{"id":"TRN-c62908e4-5f15-4128-aca5-894ba463a3e5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-06","m":-74.17,"p":"Nordstrom Rack","s":"Nordstrom Rack"},{"id":"TRN-fa80e1b3-2c90-4dd7-a968-71f76b8eb8cc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-06","m":-6.36,"p":"Baltimore Convention","s":"2BALTIMORE CONVENTION"},{"id":"TRN-66d205ad-0520-4354-9357-9a6adb4137fc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-71.86,"p":"Klarna","s":"KLARNA"},{"id":"TRN-57ad672d-3ae0-45d6-ba85-18582b0df5c1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":276.18,"p":"Deposit","s":"Check Deposit (Mobile)"},{"id":"TRN-cffc1e6d-199b-49fb-89e2-8dd0e071ba60","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":200.0,"p":"Deposit","s":"Check Deposit (Mobile)"},{"id":"TRN-3ecf5bdd-63ae-4d6e-8bf3-ea0e15930563","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-4690741a-b427-412d-8047-dfc332b2f943","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-5b8c6150-eeda-416e-a661-55b84b8ac8a5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-6.0,"p":"Subscription","s":"Subscription"},{"id":"TRN-b995255f-490b-4a1d-bec9-d819baa13ea5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-21.17,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-243b2a6e-0f93-4fdc-8708-fc81f46d2471","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-118.71,"p":"Lego","s":"LEGO ANNAPOLIS"},{"id":"TRN-8cd4d1ac-e085-4ffd-bcc7-9a294442fe26","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-6.36,"p":"Baltimore Convention","s":"2BALTIMORE CONVENTION"},{"id":"TRN-1d9c3b18-895d-4a46-a69b-80ab2579e984","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-05","m":-138.25,"p":"Maryland Department of Transportation","s":"MVA ESERVICES"},{"id":"TRN-646bbad2-9ad7-471c-ad82-91dee34b1aea","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-04","m":-352.5,"p":"Baltimore Gas & Electric","s":"BALTIMORE GAS AN"},{"id":"TRN-b11d63b0-9257-4e9b-8c3d-3db61a1480a5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-04","m":-19.99,"p":"Plushcare","s":"PLUSHCARE 855 559 2285"},{"id":"TRN-90b6ebae-5a26-4940-9cd5-5b2e5e8da531","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-04","m":-34.0,"p":"LAZ Parking","s":"LAZ Parking"},{"id":"TRN-1a320ce0-4111-403b-83cd-5184d9b92af6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-04","m":-39.34,"p":"Pratt Street Ale","s":"TST PRATT STREET ALE H"},{"id":"TRN-d63c3934-0952-4c78-a186-845e81e41b67","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-04","m":-80.25,"p":"Maryland Department of Transportation","s":"MVA ESERVICES"},{"id":"TRN-f2bf4a39-1a87-417d-8b9b-1c52e6b29ad7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":-1950.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-ed14f4a0-d5b6-4d4a-8604-3d459c862287","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":5101.09,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-f5eecf78-012d-4912-bc59-b9f9ccf4a91e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":-9.38,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-9aa62e47-1540-41b7-b29c-6513e676d655","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":-10.48,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-0dddecf1-fb73-4682-9ae5-5ac3b9e1c6cb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":-75.62,"p":"Safeway","s":"Safeway"},{"id":"TRN-a49d1d7d-f805-49ef-8fdb-e08d88d001ba","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-03","m":-23.04,"p":"Tractor Supply","s":"Tractor Supply Company"},{"id":"TRN-1ae81721-519e-452e-9ebc-5635d1936cf8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-02","m":-14.16,"p":"Wawa","s":"Wawa"},{"id":"TRN-d2671fc6-9913-4eae-b6c1-153369ccc616","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-02","m":-300.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-38d35102-36ca-49bb-a890-cc7fb63fd8f1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-02","m":-8.0,"p":"Thrasher's French Fries","s":"Thrasher's French Fries"},{"id":"TRN-c9d9f576-64d2-4f59-9d66-312bb042aa3f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-02","m":300.0,"p":"Techd Enterprises","s":"Techd Enterprises Llc"},{"id":"TRN-2b254280-3604-42d0-8bbb-9e1a3129a8a0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-103.15,"p":"Weis Markets","s":"Weis Markets"},{"id":"TRN-d76e22d3-f821-409a-b476-203d15b1775f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-37.06,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-f1f35c53-ac75-4203-bf91-7149e2c4a2ba","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-37.06,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-53bda959-89ed-40f2-b70b-032269acba81","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-24.37,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-1aa9bf6c-b10f-446d-bb50-31f6fb9b3b5d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-10.29,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-83877cb8-a97e-47ae-aad6-f4849c038c09","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-19.99,"p":"Plushcare","s":"PLUSHCARE 855 559 2285"},{"id":"TRN-ee6c7b5d-af1c-40d7-88a7-8b6b64e321ff","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-40.0,"p":"Seaside Amusements","s":"Seaside Amusements"},{"id":"TRN-cf4fd5e2-652e-47e3-a4a9-885983b722c8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-40.0,"p":"Seaside Amusements","s":"Seaside Amusements"},{"id":"TRN-45a07acc-7220-4371-9cef-fd383042d395","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-32.3,"p":"Dunkin'","s":"Dunkin Donuts"},{"id":"TRN-3e33e491-5396-4741-812d-5aab551ff05c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-104.94,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-1bf5048c-26e0-4ad3-b501-c809ba275c89","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-06-01","m":-30.0,"p":"Plushcare","s":"PLUSHCARE 855 559 2285"},{"id":"TRN-82326289-0fdd-45be-9550-c813e4a6d8e4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-31","m":0.18,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-437ecd71-4db8-4ff5-8237-1c7c709ed9e0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-31","m":-89.16,"p":"Whole Foods","s":"Whole Foods Market"},{"id":"TRN-c9404ec9-2cc0-4fe3-9a7c-d608a914b0c8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-31","m":-134.8,"p":"Trader Joe's","s":"Trader Joe's"},{"id":"TRN-4d0f1ed0-d185-468a-89dd-d6278ccdc24e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-31","m":-6.41,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-c7c0b5e3-457e-408b-a1e7-3264114b35d9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-31","m":-61.76,"p":"DoorDash","s":"DD  DOORDASH PASTICCIO"},{"id":"TRN-9502e4eb-18bd-4ff6-ac11-b9b0ebef3d54","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-30","m":750.0,"p":"Techd Enterprises","s":"Techd Enterprises Llc"},{"id":"TRN-1a5c8c4f-1b0a-4ae3-a55f-7e1e15546894","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-30","m":-25.09,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-e963bcb5-c0aa-4781-8884-a206f5c709a6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-30","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-6e9dbabd-e047-4f48-b964-dd1829bd9c86","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-30","m":-61.96,"p":"Weis Markets","s":"Weis Markets"},{"id":"TRN-86e21071-5532-46ad-9f89-104a5e487c0b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-900.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-16f55fe9-c736-4129-bdd4-d610f90fad9f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-5ff12105-b7be-49ea-b7e2-551c49ed5264","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-124d6577-8e50-4603-96d1-2cc1a5e12ab1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-7.61,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-51a27566-aa68-4ed7-8915-6318621484db","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-19.99,"p":"Funformulagames","s":"FUNFORMULAGAMES"},{"id":"TRN-d074908a-bf1a-4d49-83ef-0c3c0a06baae","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-29","m":-12.77,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-97234679-a130-45c1-8334-6ba2896dadf4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-300.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-53281b31-d95c-48e7-8186-60b0e1f001a1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-93a380e5-d9b8-4a0a-9f72-fe42a03b470c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-47.66,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-e682b2d9-9831-4700-851e-144a1f924622","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-6.61,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-15513575-c23b-41be-9032-21d789e9d3b2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-401c082a-0147-4985-8762-523aa99a88ef","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-28","m":-5.29,"p":"Galactic Frontier","s":"GALACTIC FRONTIER"},{"id":"TRN-8e9740c4-af1f-4fe6-beb0-0c9e2f3b3318","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":-79.47,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-86559a68-2c6f-4631-9ed7-a59cb6f16cd2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":-150.49,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-d4c48a3b-58df-47f5-8902-b706ac76dc54","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":-25.43,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-3dc797db-4a25-4742-9501-ac5db00bec8f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":-13.49,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-fa06e55d-cb94-4187-abd3-3d0159ca877c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":-214.64,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-ac46c03f-a61a-496a-9bd0-05a0e39d6f25","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-27","m":2000.0,"p":"Deposit","s":"Check Deposit (Mobile)"},{"id":"TRN-cbe10b4f-8558-4a1b-b213-80e6168d523f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-26","m":-1300.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-ba9ca8b8-cabe-4420-8553-046f88d14ea9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-26","m":-158.81,"p":"Citibank","s":"CITIBANK, N.A."},{"id":"TRN-f9a65088-1fa4-4f4d-9737-3e121adf61df","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-26","m":-19.99,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-f4401366-f426-4476-8943-74fbe7319f3b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-26","m":-221.45,"p":"Ingrano Restaurant Ev","s":"INGRANO RESTAURANT   EV"},{"id":"TRN-27619841-8e83-4423-bf83-ecd61ead1cb9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-25","m":-115.48,"p":"Target","s":"Target"},{"id":"TRN-870f7104-0930-4aa3-af3d-3bb3cb4974e0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-25","m":-106.47,"p":"The Vitamin Shoppe","s":"Vitamin Shoppe"},{"id":"TRN-20338c6e-4415-47bf-8bf5-f88ba5c520fa","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-25","m":-61.85,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-3d179cb5-f6e8-4954-bc3d-cd8bc9d92aa9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-24","m":-32.49,"p":"Mayo Edgewater","s":"CPP MAYO EDGEWATER EFT"},{"id":"TRN-f12b664a-38a9-4078-8c9f-673a6c5c3059","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-24","m":-3.13,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-13b43350-4155-464a-bfb1-2f64dbb5032f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-24","m":-16.31,"p":"McDonald's","s":"McDonald's"},{"id":"TRN-29bbfa6f-63cc-49f9-824b-23281774e634","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-20.0,"p":"Bark Subscription","s":"BARK US SUBSCRIPTION"},{"id":"TRN-b7dc5a8a-4346-4a88-8f53-4cbb2a004b46","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-26.55,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-41b190eb-6953-47b5-9e2b-4d1da6b11996","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-7.25,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-743c6c59-06ac-472d-8f10-c502057b2c32","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-70.21,"p":"Fat Boys Crab House","s":"TST  FAT BOYS CRAB HOUS"},{"id":"TRN-30dd22f8-ac35-461f-851d-fedd087d8cd6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-148.55,"p":"Fat Boys Crab House","s":"TST  FAT BOYS CRAB HOUS"},{"id":"TRN-cf576526-ee4a-407d-b5d2-35801fbe982a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-23","m":-20.12,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-18579413-1305-45cf-a32d-28cbb86bafcb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-a0bcc03a-c603-462d-9a2c-cf5c6ee349fc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-34.97,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-e9eff16b-eeda-4c54-8921-f0da1df2a524","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-9738d98b-c106-41fd-bf56-a8a4c897fe35","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-532.12,"p":"Department of Education","s":"DEPT EDUCATION"},{"id":"TRN-ad65f91b-3949-4305-9073-059eccfece9d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-3.17,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-8f5f2523-b43d-49e5-9b84-08493a5381e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-762.44,"p":"Chase Auto Finance (CAF)","s":"CAF DIRECT CHECK / Chase Auto Finance"},{"id":"TRN-e4fdc084-629b-4077-b6ac-bbe84c6cb526","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-503.69,"p":"Educ Sys FCU","s":"EDUC SYS FCU"},{"id":"TRN-31aa0017-de32-4471-a6ca-bd0d04dc6868","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-22","m":-38.16,"p":"Websit","s":"SQSP  WEBSITXXXXXXXXXX"},{"id":"TRN-c039f278-93d3-4639-be22-fffd011c5b30","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-21","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-8b7595a1-c683-4044-880e-775e38eec315","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-21","m":-54.34,"p":"DoorDash","s":"DD  DOORDASH PASTICCIO"},{"id":"TRN-f79228fc-6c07-45ef-bcc3-e3b6ac2ba195","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-20","m":5101.09,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-dd0c5011-f35a-47a7-a170-565ce66ab0cb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":13.0,"p":"Deposit From Performance Savings","s":"Deposit from 360 Performance Savings XXXXXXX6983"},{"id":"TRN-52229978-3251-4140-8a31-8b760a51b987","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-76.31,"p":"PayPal: YouTube TV","s":"PAYPAL to STEVEN NOVAK / YouTube TV"},{"id":"TRN-fff61975-23c8-496c-b2c0-0b2b1aec26be","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-3.18,"p":"Rocket Money","s":"Rocket Money"},{"id":"TRN-ac00f743-ead8-4287-89f6-4e982722b290","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-35.38,"p":"Black Market Baker","s":"TST BLACK MARKET BAKER"},{"id":"TRN-f668a029-fad5-470d-b963-4095f81cbf87","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-6.35,"p":"CVS","s":"CVS"},{"id":"TRN-1140a32d-40ee-42b4-b4b8-c4f7c4911f54","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-41.03,"p":"DoorDash","s":"DD  DOORDASH FIVEGUYSB"},{"id":"TRN-c2c33598-f787-4ad5-aba0-db38c3b8717d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-19","m":-31.79,"p":"Safeway","s":"Safeway"},{"id":"TRN-dea5736b-b078-4250-9ec6-67e0e03741f4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-52.96,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-31771743-a644-4300-bc19-ce520ca9b449","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-499.36,"p":"Geico","s":"GEICO"},{"id":"TRN-55146449-6987-4587-8da2-b7da054e1af8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-10.59,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-0fedb726-2de0-4f4f-8185-82752ab4b0f4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-6.35,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-464df8bc-be8f-42b6-98bf-5c76c79375e0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-385.05,"p":"Founding Farmers","s":"TST FOUNDING FARMERS"},{"id":"TRN-1b249b80-c9f3-4e24-9604-bc0f8d0287ba","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-43.63,"p":"The Commencement","s":"SQ  THE COMMENCEMENT G"},{"id":"TRN-15818bbd-bb31-4a78-8fc2-44a4dfc100ba","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-28.38,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-81d7a1f2-686e-4aec-b188-945574eda38a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-18","m":-7.31,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-767068a2-074a-4465-9349-b34341b9f496","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-17","m":-72.95,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-fd335d2d-d919-45a3-9975-2a3f117c33c3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-17","m":-15.95,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-daeb0dec-9e43-4f05-bdcc-ac1ccdaaff87","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-17","m":-18.28,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-0564d1be-9645-422c-b957-df280540ab1a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-16","m":-230.4,"p":"The All American","s":"TST THE ALL AMERICAN S"},{"id":"TRN-0d2b8cc2-3a8b-4071-8dcb-71e07b153892","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-16","m":-21.66,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-e100e64a-71e0-451f-aaa0-a2ad1e1e8505","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-16","m":-6.25,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-e0ea914f-db18-4d21-91ed-86526303d239","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-16","m":-14.39,"p":"CVS","s":"CVS"},{"id":"TRN-2354a1e9-26a5-4f12-b5d7-2aa1914fa9e5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-16","m":-10.98,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-c07222e9-918f-40e1-b722-bfc9092a421f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":98.25,"p":"PayPal","s":"PAYPAL"},{"id":"TRN-2c3a13a4-399a-4b12-a47d-d17352b4eb16","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-cffe5b0f-4478-4077-a88f-045838bbe91f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-28f027e0-042c-45b3-bb13-382e3e0418a3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":-21.19,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-090dafa9-cbbc-432e-a3ff-8ffa59ff4766","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":-10.9,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-f7a72ec5-b122-4212-b1cb-9a7c5b9fda5f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-15","m":-9.68,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-be002d97-1af6-4746-b50c-906b84ad7264","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-14","m":-12.72,"p":"PayPal: Washington Post","s":"PAYPAL to STEVEN NOVAK / Washington Post"},{"id":"TRN-eec62a88-1829-4dd1-8958-32f577f9c458","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-14","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-3b3ece28-be8d-43b0-b71d-0d94b6bae531","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-14","m":149.99,"p":"Amazon","s":"360 Checking Card Adjustment Signature (Credit) AMAZON MKTPLACE PMTS AMZN COM BI"},{"id":"TRN-f8ca93e8-2afb-4c3a-92fe-355754c2d3b7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-14","m":-44.99,"p":"Mayo Edgewater Trip","s":"CPP MAYO EDGEWATER TRIP"},{"id":"TRN-09a1a6b7-5c2b-4883-a9bb-2872834836fe","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-14","m":-2.96,"p":"Wawa","s":"Wawa"},{"id":"TRN-bab9a887-1d33-44cf-b753-1480eac14820","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-13","m":-60.36,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-24789633-3175-4817-a5bd-794ea90d8819","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-13","m":-10.97,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-d9d845ff-43de-40e7-ae2e-65323b758751","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-13","m":-16.31,"p":"McDonald's","s":"McDonald's"},{"id":"TRN-39832a37-8beb-4e24-924e-57d6afba4e33","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-13","m":-7.26,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-262cabaa-ffe0-4902-9638-97c430361a83","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-40.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-ef985ed8-1593-42ca-a18a-2fea8d7f2eda","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-23.31,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-5233ff5b-bc0e-456f-8d0c-3da8a20ac1e5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-34.13,"p":"Rise Up Coffee","s":"SQ  RISE UP COFFEE   E"},{"id":"TRN-a7888988-d1df-4698-99ab-ba8d5f71f4e9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-47.19,"p":"Picante Food Truck","s":"TST PICANTE FOOD TRUCK"},{"id":"TRN-10bbff7f-7abb-4081-88c5-2e58978dcff3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-134.58,"p":"Homestead Gardens","s":"Homestead Gardens"},{"id":"TRN-62a7211b-62fd-425b-bfdd-d41026c85c65","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-12","m":-6.31,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-0415cea7-ce87-490f-b64b-9fa49836ca21","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-48.74,"p":"Costello's Ace Hardware, Home & Garden","s":"COSTELLO S ACE  16663 E"},{"id":"TRN-86c1d438-2854-4154-9db2-6371bde9624e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-192.53,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-84523ecb-16f0-4927-82df-4ba05cfa4ac0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-29.99,"p":"Coinbase","s":"Coinbase.com"},{"id":"TRN-bcd70091-e3d0-437c-8b26-f7b5e5186313","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-214.64,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-76aa1f89-4f20-443e-97c3-fadbffb5ecda","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-10.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-81cb3913-a7c4-4c76-8335-d130316628d1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-28.56,"p":"Great Frogs","s":"SQ  GREAT FROGS"},{"id":"TRN-0e8fbb9c-0bce-401e-ac80-198c1b489016","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-17.85,"p":"Great Frogs","s":"SQ  GREAT FROGS"},{"id":"TRN-be044d4a-77d8-43d7-9a20-fd6ea76e4f4c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-100.0,"p":"Transfer to Apple Pay","s":"APPLE CASH SENT MONEY"},{"id":"TRN-be7ef139-bdd6-44a1-acee-d6d688f096b9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-11","m":-88.18,"p":"Tractor Supply","s":"Tractor Supply Company"},{"id":"TRN-3a91b974-bf6e-46a7-b529-d2d67de9f1c3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-4.45,"p":"7-Eleven","s":"7-Eleven"},{"id":"TRN-8c650654-f562-409d-b9c0-81eec5686c73","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-81.83,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-dbe98149-a552-4df3-973e-77a1bb1ec8e0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-27.08,"p":"Bayside Bull Edgewat","s":"BAYSIDE BULL   EDGEWAT"},{"id":"TRN-7350d651-2775-4215-bc7f-15f87e1d10f5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-299.99,"p":"Giant Food","s":"Giant Food"},{"id":"TRN-1ed518d4-b991-4704-bb7a-225bfefc2b7b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":21.27,"p":"Amazon","s":"360 Checking Card Adjustment Signature (Credit) AMAZON MKTPLACE PMTS AMZN COM BI"},{"id":"TRN-8c7850d1-5a6d-48fd-8821-ec79bfc483a7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-340.0,"p":"Child Parent Couns","s":"SQ  CHILD PARENT COUNS"},{"id":"TRN-90bfd13a-b1e3-4e59-ad20-a56d65a38f7b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-37.51,"p":"Black Market Baker","s":"TST BLACK MARKET BAKER"},{"id":"TRN-46969010-1807-4c5d-ae54-112dd779fae4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-10","m":-5.54,"p":"Wawa","s":"Wawa"},{"id":"TRN-19d4aff1-1717-4524-bb5f-a40d00745996","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-09","m":-17.21,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-17790347-13ea-41e9-98ae-b844d8a1ac09","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-08","m":-650.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-9c7c0ff7-f05f-4ab6-b8d7-518eb917d1e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-08","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-bea41ad5-9547-4a2b-b72a-cdaaf152e53a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-08","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-6f7858ea-7338-437e-b0f2-a1fda139ec65","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-08","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-5a201627-132e-4c60-97a8-0d31279979eb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-771.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-a6e54b88-8a10-484c-93c5-79ef09dee1bc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-9.99,"p":"PayPal: DoorDash DashPass","s":"PAYPAL to STEVEN NOVAK / DoorDash DashPass"},{"id":"TRN-8c00068f-8bc0-4d9d-832a-57ed86c26c90","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-14.94,"p":"Colpark Loc","s":"COLPARK LOC 517"},{"id":"TRN-1e06f22c-3a43-439d-b286-d245ca1f7398","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-602ac086-b985-4ebd-8c8e-ab5f1457720c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-60.0,"p":"Transfer to Apple Pay","s":"APPLE CASH SENT MONEY"},{"id":"TRN-1ea3d29f-4581-438e-9f81-19e0116a8c1a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-143e93b9-4c5a-4de1-9106-c5fb0b6bb675","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-45.38,"p":"Safeway","s":"Safeway"},{"id":"TRN-367583e2-90b2-4aea-8843-bdc17b5f9ec0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-7.36,"p":"Potbelly","s":"Potbelly Sandwich Works"},{"id":"TRN-cfe80dc4-ba3e-4a38-90da-4cbc3102d888","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-16.63,"p":"Moe's Southwest Grill","s":"MOE S SW GRILL 103885"},{"id":"TRN-c91cc39f-b284-4d21-9c85-8e523e093fd5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-07","m":-6.25,"p":"Metro","s":"METRO"},{"id":"TRN-6925b823-2d8c-446b-86a7-3442d65c4888","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-135.0,"p":"Lucia Del Carmen Coto Granados","s":"LUCIA DEL CARMEN COTO GRANADOS"},{"id":"TRN-f408b08d-2bab-4858-b98d-5a5ac5cd90e1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":5101.09,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-f8922e3b-b21b-4136-93da-2e9b647e6ca2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":435.0,"p":"FSA Reimbursement","s":"FSAREIMBURSEMENT"},{"id":"TRN-22df4d69-9922-4fcc-82a8-c423b157510b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-4.28,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  337643 Q35"},{"id":"TRN-31ff3ac1-5304-4e8a-8fbf-43db296f8511","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-56.0,"p":"Transfer to Apple Pay","s":"APPLE CASH SENT MONEY"},{"id":"TRN-833ec049-a745-4c90-9cae-ce6a7547b0fc","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-19.99,"p":"Funformulagames","s":"FUNFORMULAGAMES"},{"id":"TRN-232d181f-bddb-4147-b8c0-53553059f330","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-0.99,"p":"Funformulagames","s":"FUNFORMULAGAMES"},{"id":"TRN-ae3aec53-94e2-4513-8c66-c5ad3e7d3a5e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-06","m":-1950.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-8a33b78d-ba0d-4c6c-8a42-752fc33de195","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-05","m":660.0,"p":"FSA Reimbursement","s":"FSAREIMBURSEMENT"},{"id":"TRN-9bc63f32-34b5-4476-8e23-294dbe12618b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-05","m":-69.02,"p":"Black Market Baker","s":"TST BLACK MARKET BAKER"},{"id":"TRN-fa649d94-80aa-47ee-b723-7ac6a591786b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-05","m":9.53,"p":"Costello's Ace Hardware, Home & Garden","s":"360 Checking Card Adjustment Signature (Credit) COSTELLO S ACE 16663 E EDGEWATER"},{"id":"TRN-67d1f095-8dc1-44ed-b678-dc9c448bc4e2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-04","m":-23.3,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-4a7707bf-cf2c-4f77-ac43-c826eb2931d2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-04","m":-16.95,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-f04840ea-ecdc-4f54-a1ab-d42c79926efd","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-04","m":-6.0,"p":"Subscription","s":"Subscription"},{"id":"TRN-6b84ddb6-76e0-4bfe-831e-442922c558a9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-04","m":-91.8,"p":"Clariaxel Tires","s":"CLARIAXEL TIRES LLC"},{"id":"TRN-1b038716-504e-4c4c-b99a-f1914ee97017","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-03","m":-19.91,"p":"Five Guys","s":"Five Guys"},{"id":"TRN-fa84d6e6-153e-4c56-9309-353f0187856e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-03","m":-23.29,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-66437add-1da6-4d40-8132-ca0e89ddcc2f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-02","m":-23.86,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-23a44e44-9eb5-4149-b3d2-f96b9fbbf51f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-eb18e8f0-adb8-4ec3-9ca5-0446b7f74d49","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-8c43f773-50d3-4e1a-844e-961366e80a8b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-10.29,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-cebaa57b-a213-408a-92a7-ccc054e3fe4a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-40.02,"p":"Chipotle","s":"Chipotle"},{"id":"TRN-7d0f686d-5e91-4648-95f8-3e5482e178c3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-21.15,"p":"Fameassist Com","s":"FAMEASSIST COM"},{"id":"TRN-6ab20082-8ba3-4447-94f3-55173956bfa0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-149.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-a393e882-a678-48d2-b820-cdd55fa62ced","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-3.13,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-28837c2f-23a1-4b64-aeae-4a9d3d62079e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-05-01","m":-5.99,"p":"Ups","s":"UPS 1Z5R75463536985355"},{"id":"TRN-65de64e6-6e10-4937-9ebf-95434d7c9052","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":0.19,"p":"Monthly Interest Paid","s":"Monthly Interest Paid"},{"id":"TRN-16ea3a29-6e0a-43d5-8ee9-ab2f68b917d5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-70.85,"p":"Highs of Baltimore","s":"HIGHS 48"},{"id":"TRN-92d97fd0-72ea-4929-b357-401cf040586c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-0b21be94-7c9f-466a-9393-4c957859b084","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-42.35,"p":"Fico","s":"FICO"},{"id":"TRN-20f7508c-537c-4992-882d-0fa5f433db3a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-20.6,"p":"Anthropic","s":"ANTHROPIC"},{"id":"TRN-24260e21-b8bd-488e-876c-b75bfd45d03b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-52.38,"p":"Anne","s":"BCS MPP ANNE ARUNDEL CO"},{"id":"TRN-885a6f5f-3149-41b4-b99a-238cf933c9ef","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-48e67d4f-be1d-4e5b-a2b2-d60190f32919","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-17.54,"p":"Ett Markelinsurance","s":"ETT MARKELINSURANCE"},{"id":"TRN-5c896d24-10c1-4e28-9e8f-6c07a1b56490","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":70.1,"p":"Checking Adjustment Signature Credit Tesla Property Casua","s":"360 Checking Card Adjustment Signature (Credit) TESLA PROPERTY CASUA FREMONT CA"},{"id":"TRN-e30c0db1-7e41-4567-8f05-eaf4dc121b6f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-104.94,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-26bb32b8-3996-49a1-bca6-3c9d68f99899","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-30","m":-14.79,"p":"Amazon","s":"Amazon"},{"id":"TRN-b2b64e9d-2b0c-4014-b730-a8757f241977","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-29","m":5.0,"p":"Federal Tax Refund","s":"IRS  TREAS 310"},{"id":"TRN-5412df7d-dd6c-436b-a311-8d3b315e7e49","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-29","m":-7.94,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-18bf5c74-33ef-451b-9e76-bbce76f6e212","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-29","m":-23.29,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-9a9876eb-6f3e-443e-84b2-4d1622e5244a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-29","m":-8.11,"p":"Starbucks","s":"Starbucks"},{"id":"TRN-607baba2-eba0-463e-85a3-dc5e079debb6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":0.0,"p":"Geico","s":"Prenote AH0427HI.001^GEICO^EFT REFUND^260427"},{"id":"TRN-14602696-a609-4614-8cbf-00a18a52a720","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":-19.0,"p":"Instacart","s":"IC  INSTACART SUBSCRIP"},{"id":"TRN-cdfd5f77-46b4-42c5-be1e-86abe6bdf74a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":-11.16,"p":"Instacart","s":"Instacart"},{"id":"TRN-6eda0000-be20-4f1a-9240-2eeb98474280","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":-13.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-3d609ab5-50f9-4c41-805d-2b705c6fd6fb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":-232.43,"p":"Instacart","s":"Instacart"},{"id":"TRN-55e3a50f-3e07-4b68-b78e-54728628f79c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-28","m":-29.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-b57a3288-b1be-4ad5-b9fd-e0d371f5097a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-500.0,"p":"IRS","s":"IRS"},{"id":"TRN-6c50599a-8376-44dc-ba0e-07ee5bea5eff","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-350.0,"p":"Transfer to Venmo","s":"VENMO"},{"id":"TRN-02765f81-069b-48ce-acf7-b21e3b16a5f7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-214.65,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-82308c20-23e5-4143-a513-5d40f64ac55a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-32.84,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-e1cbc1b4-cee6-42a1-9fe7-11ec3a835eeb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-19.99,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-44112e0f-ee26-446d-9763-1e1672397b27","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-13.49,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-bdcba37b-a024-4a1a-875f-aaf0dff867a5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-99.8,"p":"Clarksburg Market","s":"SQ  CLARKSBURG MARKET"},{"id":"TRN-00938500-31da-416b-b889-c1e908bbe9b5","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-208.38,"p":"Klarna","s":"Klarna"},{"id":"TRN-49e41730-cefa-4da3-bfa1-fef38578a26e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-27","m":-42.36,"p":"Tractor Supply","s":"Tractor Supply Company"},{"id":"TRN-da1b733d-f635-44b2-9bc8-726b4265dcd4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-3.81,"p":"7-Eleven","s":"7-Eleven"},{"id":"TRN-f2ba6590-50a9-408d-8312-25ac14aacd99","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-54.99,"p":"Best Buy","s":"Best Buy"},{"id":"TRN-9d391be3-2e1f-48a1-a7ff-28cb8989cbce","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-32.49,"p":"Mayo Edgewater","s":"CPP MAYO EDGEWATER EFT"},{"id":"TRN-c338eba0-690c-46cd-b0d4-14e334b97b07","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-15.0,"p":"Clariaxel Tires","s":"CLARIAXEL TIRES LLC"},{"id":"TRN-57166ddb-dcba-444b-93a9-beaba9f14dd8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-13.55,"p":"McDonald's","s":"McDonald's"},{"id":"TRN-fd502052-7037-4505-97fe-d7cab78489be","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-26","m":-23.82,"p":"Landmark Annapolis Harb","s":"LANDMARK ANNAPOLIS HARB"},{"id":"TRN-f3e9dc35-a58e-40ab-9831-bde3811305e3","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-25","m":-35.56,"p":"Fandango","s":"Fandango"},{"id":"TRN-9c4d8461-67df-4559-9800-f59fbb6f007b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-25","m":-13.76,"p":"Dunkin'","s":"Dunkin Donuts"},{"id":"TRN-b9e804ae-9b48-45ef-adab-e700ca44dfd7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-25","m":-18.5,"p":"Royal Farms","s":"Royal Farms"},{"id":"TRN-df491bc3-d073-4309-90e7-55c51c71adf0","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-25","m":-50.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-5062ea55-310d-4c90-ab04-f543e0f93b1d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-900.0,"p":"Rose Taylor","s":"ROSE TAYLOR"},{"id":"TRN-6b74de0e-36f8-45a6-b703-42953d593da1","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-88c1eafe-c410-4078-b82b-68c8d96ecb45","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-38ffb092-b852-4748-9a26-b97db3c07526","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-8.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-6d2c70a3-3f11-426c-96ff-4f4efaf5e833","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-9.38,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-3e5ac039-73c3-4d31-ad10-1a2549128a1e","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-16.31,"p":"McDonald's","s":"McDonald's"},{"id":"TRN-b323d97b-035e-4504-a7dd-e395d70602ed","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-17.8,"p":"Amazon","s":"Amazon"},{"id":"TRN-c403a803-aee0-4ce0-b012-fd9d6b4ec253","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-24","m":-503.69,"p":"Educ Sys FCU","s":"EDUC SYS FCU"},{"id":"TRN-fd29e150-d40c-491e-84bb-f0bf0376102a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-23","m":-13.07,"p":"Supercharger","s":"TESLA  INC  SUPERCHARG"},{"id":"TRN-3d861004-815e-4a13-9ad8-a53be36ffa8f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-23","m":-16.19,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-deac5045-b87e-44d2-9d07-6f799f3dbe6d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-23","m":-26.49,"p":"Experian","s":"Experian"},{"id":"TRN-01db29d0-6833-4c01-bbc8-91a633c117da","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-23","m":-95.39,"p":"PayPal: McAfee LiveSafe (annual)","s":"PAYPAL to STEVEN NOVAK / McAfee LiveSafe (annual)"},{"id":"TRN-f762d22e-7256-4ae6-8e59-774abd7e504f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-23","m":-10.7,"p":"PayPal: Ads","s":"PAYPAL to STEVEN NOVAK / Ads"},{"id":"TRN-7e256b24-6f2a-440c-8a4a-7077b6a7b5e2","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":5100.92,"p":"Defense Finance and Accounting Service","s":"DFAS-CLEVELAND"},{"id":"TRN-be23e84c-0028-4bd3-b4ac-8cf04f2e0dd9","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-34.97,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-4ba09681-9a7c-4e09-9001-675100858e7f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-7.4,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-81acbeaf-e4e3-4f06-a1e6-639428f16e83","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-20.0,"p":"Bark Subscription","s":"BARK US SUBSCRIPTION"},{"id":"TRN-68388f92-c9cf-4795-b773-e99f4d8f1f16","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-11.96,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-bf91df85-b442-4188-99f7-ce406837b08c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-12.25,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-3dc8c556-5794-4e88-98c4-e8cb84b2ca17","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-22","m":-30.0,"p":"Grok Xai","s":"GROK XAI"},{"id":"TRN-dbe9218f-d20d-4fbd-8ad7-98f5ee415957","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-21","m":516.0,"p":"St. of Maryland","s":"ST. OF MARYLAND"},{"id":"TRN-9509c1f7-fb03-42f2-890a-478b2e77c3b4","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-21","m":114.0,"p":"St. of Maryland","s":"ST. OF MARYLAND"},{"id":"TRN-4d014462-b36a-400a-ab65-ffd97a019c72","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-21","m":-11.5,"p":"Rita","s":"RITA S  339"},{"id":"TRN-a36b7e05-8572-4747-a5d8-ce23074b6007","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-21","m":-134.0,"p":"Hone Health","s":"HONE HEALTH"},{"id":"TRN-0df99e1f-90c5-4ed0-886a-4dc25bf03ae7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-20","m":-21.19,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-58b6049c-0829-46ec-b2ad-4749f1e63952","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-20","m":-9.99,"p":"PayPal: DoorDash DashPass","s":"PAYPAL to STEVEN NOVAK / DoorDash DashPass"},{"id":"TRN-5b00a196-5076-4e48-9a70-aca62948b0ae","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-20","m":-6.36,"p":"Rocket Money","s":"Rocket Money"},{"id":"TRN-4cf7696c-c07c-4f69-9cee-751a30490284","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-20","m":-21.19,"p":"Five Guys","s":"Five Guys"},{"id":"TRN-4f14a5f7-0e59-472f-b931-23b2086d0f5d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-19","m":-19.9,"p":"Saigon Palace","s":"Saigon Palace"},{"id":"TRN-52828663-87a5-4edd-a64b-1c957c95f81c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-19","m":-6.51,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-1cca809a-9090-4566-852f-295ef882d657","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-19","m":-27.32,"p":"Taco Bell","s":"Taco Bell"},{"id":"TRN-f027673f-d1a7-4149-bb62-459b9642e80c","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-19","m":-60.0,"p":"Tesla  Motors","s":"Tesla Motors"},{"id":"TRN-7cc3510b-0de0-43bf-9cdb-8a4a93b4058b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-18","m":-30.46,"p":"Youtube TV","s":"YouTube TV"},{"id":"TRN-0da0d424-e144-4519-95fc-083d0ab457c7","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-18","m":-10.98,"p":"Chick-fil-A","s":"Chick-fil-A"},{"id":"TRN-8d88cee3-237a-4bde-a3b3-b154b622b718","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-18","m":-13.61,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-e25a013c-c461-4522-9b76-c633d47660a8","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-18","m":18.49,"p":"Prime Video","s":"360 Checking Card Adjustment Signature (Credit) PRIME VIDEO CHANNELS AMZN COM BI"},{"id":"TRN-1e813957-e870-47d3-b551-915035d5c728","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-18","m":-21.72,"p":"Ledo Pizza Edgewater","s":"LEDO PIZZA   EDGEWATER"},{"id":"TRN-dae9d9d9-57bf-4935-b241-26d081f6917d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":-40.0,"p":"Acorns","s":"Acorns Invest"},{"id":"TRN-11abc0a4-b503-43a4-8377-ce5618c20125","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":-25.0,"p":"Acorns Later","s":"Acorns Later"},{"id":"TRN-e1742cd2-44f1-4f05-9fb0-c4ec32dfda5f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":35.31,"p":"Paypal From Steven Novak","s":"PAYPAL from STEVEN NOVAK"},{"id":"TRN-6ff98ecd-c2a6-41a1-b4b4-fbf7203ca62f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":-105.99,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-4ef3fe98-86b5-4873-a426-38abe9ed6188","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-86400437-9202-4ef2-9e83-2294612efc61","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":-590.0,"p":"Withdrawal to 360 Performance Savings Account","s":"Withdrawal to 360 Performance Savings XXXXXXX6983"},{"id":"TRN-d14116d4-1a98-4e5e-b754-b3a8c04be5df","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":437.22,"p":"Transfer from Venmo","s":"VENMO"},{"id":"TRN-e215de8b-7d5f-4adb-9982-bef6789b776a","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-17","m":98.25,"p":"PayPal","s":"PAYPAL"},{"id":"TRN-b14a3817-568f-4af2-b2e2-29770ce98834","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-12.72,"p":"PayPal: Washington Post","s":"PAYPAL to STEVEN NOVAK / Washington Post"},{"id":"TRN-fec266b8-ab6a-4fdf-9c59-f60475189dfa","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-10.59,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-ed612d51-9a9d-453f-af72-b93a9a0bf719","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-50.0,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-3fb32c2b-6faa-4e92-bec6-03cc8931e632","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-5.82,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-8ff994ad-8178-4436-9b58-6bd7959e5ff6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-31.79,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-ae866edc-74e0-464f-826e-6d19f412e230","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-6.35,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-495623ca-5d63-4b5c-b8e9-ef3d58e301c6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-15.97,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-f389b42b-dd40-4c20-822c-10fc052f349f","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-3.45,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-21bc964b-9813-4818-bcc9-dc8026da6e48","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-16","m":-12.84,"p":"Amazon","s":"Amazon"},{"id":"TRN-e463deb6-f0c1-4e54-b2c4-8a1fac1c71ac","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":222.5,"p":"Deposit","s":"Check Deposit (Mobile)"},{"id":"TRN-7072f97b-c890-4275-8576-2811a41e5968","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-4.23,"p":"Royal Farms","s":"Royal Farms"},{"id":"TRN-7fea2182-b2b4-4171-b749-bf47c940fa6b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-9.07,"p":"Royal Farms","s":"Royal Farms"},{"id":"TRN-35c6a696-7144-4069-a89a-8a404263e8e6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-21.19,"p":"PayPal: Adobe","s":"PAYPAL to STEVEN NOVAK / Adobe"},{"id":"TRN-eaee6b4e-0095-45e9-9bfc-3cef4158ae2b","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-676.41,"p":"Marriott Vacation Club","s":"MARRIOTT MVC"},{"id":"TRN-e5211d38-178e-472f-ba56-684f86b29a6d","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-21.19,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-6d25d9d9-aa17-44c2-bd34-15536ca70436","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-21.19,"p":"PayPal","s":"PAYPAL to STEVEN NOVAK"},{"id":"TRN-bb5a0f9d-2127-4689-9821-8ffaba4c51ad","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-2.85,"p":"Forte Meade","s":"FORTE MEADE"},{"id":"TRN-868b7171-9a30-4d66-a835-2d7c87802b08","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-35.27,"p":"The Hideaway Ode","s":"TST THE HIDEAWAY   ODE"},{"id":"TRN-341c1ee9-48d1-41d1-88a2-b18bb6ba5de6","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-3.34,"p":"Dunkin' & Baskin-Robbins","s":"DD BR  339568 Q35"},{"id":"TRN-a70a5290-7ee3-4800-916d-0881e7a8ad50","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-14.95,"p":"Spokeo Search","s":"SPOKEO COM"},{"id":"TRN-23c9f43d-7958-4b6f-a224-9060ac957f45","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-145.04,"p":"Instacart","s":"Instacart"},{"id":"TRN-4d760481-06ca-4047-8011-84f52b00bedb","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-149.99,"p":"Amazon","s":"Amazon"},{"id":"TRN-53383a5c-589b-4473-af31-f663a9442913","a":"ACT-99136067-fa2a-49c5-92f4-32df30832fac","d":"2026-04-15","m":-16.99,"p":"Amazon","s":"Amazon"}]};/*FDBANKDATA*/</script>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f7f7f5; --card: #ffffff; --border: #e4e2dd;
+    --text: #1f1e1b; --muted: #6f6d66;
+    --accent: #b3541e; --accent-soft: #fdf0e7;
+    --green: #2e7d32; --green-soft: #e8f3e9;
+    --red: #c62828; --red-soft: #fdecea;
+    --amber: #b26a00; --amber-soft: #fdf3e0;
+    --blue: #1a5f9e; --blue-soft: #e8f1f9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 14px; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin: 4px 0 2px; }
+  .sub { color: var(--muted); margin-bottom: 14px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { border: 1px solid var(--border); background: var(--card); padding: 7px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--muted); }
+  .tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .card .label { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .card .value { font-size: 20px; font-weight: 650; }
+  .card .hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .panel h2 { font-size: 14px; margin: 0 0 10px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  th.num { text-align: right; }
+
+  .chip { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .chip.paid { background: var(--green-soft); color: var(--green); }
+  .chip.overdue { background: var(--red-soft); color: var(--red); }
+  .chip.soon { background: var(--amber-soft); color: var(--amber); }
+  .chip.upcoming { background: var(--blue-soft); color: var(--blue); }
+  .chip.bank { background: var(--accent-soft); color: var(--accent); }
+
+  button { font-family: inherit; font-size: 13px; border-radius: 7px; border: 1px solid var(--border); background: var(--card); padding: 6px 12px; cursor: pointer; }
+  button.primary { background: var(--text); color: #fff; border-color: var(--text); }
+  button.small { font-size: 12px; padding: 4px 10px; }
+  button.danger { color: var(--red); }
+  button:hover { filter: brightness(0.96); }
+
+  input, select { font-family: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 7px; background: #fff; color: var(--text); }
+  input[type="number"] { width: 100px; }
+  select.catsel { font-size: 12px; padding: 3px 4px; }
+  label.f { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--muted); }
+
+  .monthnav { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .monthnav .m { font-weight: 650; min-width: 130px; text-align: center; }
+  .empty { color: var(--muted); padding: 14px 4px; font-size: 13px; }
+  .chartbox { position: relative; height: 260px; }
+  .banner { background: var(--accent-soft); border: 1px solid #eed9c8; color: #7a4a20; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; }
+  .banner.ok { background: var(--green-soft); border-color: #cde5cf; color: #245c28; }
+  .pos { color: var(--green); } .neg { color: var(--red); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Financial Dashboard</h1>
+  <div class="sub" id="subTitle"></div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="bills">Bills</div>
+    <div class="tab" data-tab="spending">Spending</div>
+    <div class="tab" data-tab="networth">Net Worth</div>
+    <div class="tab" data-tab="cashflow">Cash Flow</div>
+    <div class="tab" data-tab="business">Business</div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="view" id="view-overview">
+    <div class="cards" id="ovCards"></div>
+    <div class="panel">
+      <h2>All accounts</h2>
+      <div id="ovAccounts"></div>
+    </div>
+    <div class="panel">
+      <h2>Bills due in the next 14 days</h2>
+      <div id="ovUpcoming"></div>
+    </div>
+    <div class="panel">
+      <h2>Recent payments</h2>
+      <div id="ovRecentPaid"></div>
+    </div>
+  </div>
+
+  <!-- BILLS -->
+  <div class="view" id="view-bills" style="display:none">
+    <div class="monthnav">
+      <button class="small" id="billPrev">&#8592;</button>
+      <div class="m" id="billMonthLabel"></div>
+      <button class="small" id="billNext">&#8594;</button>
+    </div>
+    <div class="panel" id="suggWrap" style="display:none">
+      <h2>Suggested bills &mdash; recurring charges found in your bank activity</h2>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-bottom:8px">These charges repeat roughly monthly with a steady amount. Add the ones that are real bills; dismiss the rest.</div>
+      <div id="suggTable"></div>
+    </div>
+    <div class="panel">
+      <h2>Bills this month</h2>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-bottom:8px">Bills are auto-marked paid when a matching bank transaction is found (similar name, amount within 3%).</div>
+      <div id="billTable"></div>
+    </div>
+    <div class="panel">
+      <h2>Add a recurring bill</h2>
+      <div class="row">
+        <label class="f">Name<input id="bName" placeholder="e.g. Mortgage"></label>
+        <label class="f">Amount<input id="bAmount" type="number" step="0.01" min="0" placeholder="0.00"></label>
+        <label class="f">Due day of month<input id="bDay" type="number" min="1" max="31" value="1"></label>
+        <label class="f">Category
+          <select id="bCat">
+            <option>Housing</option><option>Utilities</option><option>Insurance</option>
+            <option>Subscriptions</option><option>Debt</option><option>Auto</option><option>Other</option>
+          </select>
+        </label>
+        <label class="f">Autopay
+          <select id="bAuto"><option value="no">No</option><option value="yes">Yes</option></select>
+        </label>
+        <button class="primary" id="bAdd" style="align-self:flex-end">Add bill</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Payment history</h2>
+      <div id="payHistory"></div>
+    </div>
+  </div>
+
+  <!-- SPENDING -->
+  <div class="view" id="view-spending" style="display:none">
+    <div class="banner ok" id="syncBanner"></div>
+    <div class="panel" id="reviewWrap" style="display:none">
+      <h2 id="reviewHead">Needs review</h2>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-bottom:8px">I couldn't confidently categorize these payees. Pick a category and it applies to all their transactions (past and future), or Ignore to leave them as Other.</div>
+      <div id="reviewTable"></div>
+    </div>
+    <div class="panel" id="budgetWrap">
+      <h2>Monthly budgets</h2>
+      <div id="budgetBars"></div>
+      <div class="row" style="margin-top:10px">
+        <label class="f">Category<select id="bgCat"></select></label>
+        <label class="f">Monthly budget<input id="bgAmt" type="number" min="0" step="1" placeholder="0"></label>
+        <button class="primary" id="bgSet" style="align-self:flex-end">Set budget</button>
+      </div>
+    </div>
+    <div class="monthnav">
+      <button class="small" id="spPrev">&#8592;</button>
+      <div class="m" id="spMonthLabel"></div>
+      <button class="small" id="spNext">&#8594;</button>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>Spending by category</h2>
+        <div class="chartbox"><canvas id="spChart"></canvas></div>
+        <div class="hint" style="color:var(--muted); font-size:11px; margin-top:6px">Chart excludes Transfers and Investing. Change a transaction's category with its dropdown &mdash; the fix is remembered for that payee.</div>
+      </div>
+      <div class="panel">
+        <h2>Add a manual transaction</h2>
+        <div class="row" style="flex-direction:column; align-items:stretch; gap:8px">
+          <label class="f">Description<input id="tDesc" placeholder="e.g. Cash at farmers market"></label>
+          <div class="row">
+            <label class="f">Amount<input id="tAmount" type="number" step="0.01" min="0" placeholder="0.00"></label>
+            <label class="f">Date<input id="tDate" type="date"></label>
+          </div>
+          <label class="f">Category<select id="tCat"></select></label>
+          <button class="primary" id="tAdd">Add transaction</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Transactions</h2>
+      <div id="txTable"></div>
+    </div>
+  </div>
+
+  <!-- CASH FLOW -->
+  <div class="view" id="view-cashflow" style="display:none">
+    <div class="cards" id="cfCards"></div>
+    <div class="panel">
+      <h2>Next 30 days &mdash; expected money in and out</h2>
+      <div id="cfSchedule"></div>
+    </div>
+    <div class="panel">
+      <h2>Expected variable spending &mdash; line by line</h2>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-bottom:8px">Bill payments and bill-type categories are excluded here (they're in the Bills number). Set a budget in the Spending tab for any category to override its recent average.</div>
+      <div id="cfVarTable"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>How this is calculated</h2>
+        <div class="hint" style="color:var(--muted); font-size:12px; line-height:1.6" id="cfNotes"></div>
+      </div>
+      <div class="panel">
+        <h2>Adjust projected monthly income</h2>
+        <div class="row">
+          <label class="f">Business income / month<input id="cfBizInc" type="number" step="0.01" placeholder="0"></label>
+          <label class="f">Total income override<input id="cfIncomeOv" type="number" step="0.01" placeholder="auto"></label>
+          <button class="primary" id="cfIncomeSave" style="align-self:flex-end">Save</button>
+          <button class="small" id="cfIncomeClear" style="align-self:flex-end">Use auto</button>
+        </div>
+        <div class="hint" style="color:var(--muted); font-size:12px; margin-top:8px">Leave blank to use the automatic estimate from detected deposits (military pay, recurring credits).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS -->
+  <div class="view" id="view-business" style="display:none">
+    <div class="banner">TechD Enterprises &mdash; showing activity visible in your connected personal accounts. Link the Truist business account in SimpleFIN for the complete picture.</div>
+    <div class="cards" id="bizCards"></div>
+    <div class="panel">
+      <h2>Business activity (last 90 days)</h2>
+      <div id="bizTable"></div>
+    </div>
+  </div>
+
+  <!-- NET WORTH -->
+  <div class="view" id="view-networth" style="display:none">
+    <div class="cards" id="nwCards"></div>
+    <div class="panel">
+      <h2>Net worth over time</h2>
+      <div class="chartbox"><canvas id="nwChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Accounts</h2>
+      <div id="acctTable"></div>
+    </div>
+    <div class="panel">
+      <h2>Add a manual account</h2>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-bottom:8px">Bank-connected accounts appear automatically. Add anything else here (retirement, property, loans, cards at other banks).</div>
+      <div class="row">
+        <label class="f">Name<input id="aName" placeholder="e.g. TSP Retirement"></label>
+        <label class="f">Type
+          <select id="aType">
+            <option value="checking">Checking</option>
+            <option value="savings">Savings</option>
+            <option value="investment">Investment / Retirement</option>
+            <option value="property">Property / Other asset</option>
+            <option value="credit">Credit card (liability)</option>
+            <option value="loan">Loan / Mortgage (liability)</option>
+          </select>
+        </label>
+        <label class="f">Current balance<input id="aBal" type="number" step="0.01" placeholder="0.00"></label>
+        <button class="primary" id="aAdd" style="align-self:flex-end">Add account</button>
+      </div>
+      <div class="hint" style="color:var(--muted); font-size:12px; margin-top:8px">Enter liability balances as positive numbers. Every balance update and bank sync is snapshotted, so net worth builds a history over time.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  // ---------- storage ----------
+  var K = { bills:'fd_bills', pays:'fd_payments', accts:'fd_accounts', snaps:'fd_snapshots', tx:'fd_transactions',
+            bankSnaps:'fd_bank_snaps', catOv:'fd_cat_overrides', payeeRules:'fd_payee_rules', suggDis:'fd_sugg_dismissed', reviewSkip:'fd_review_skip' };
+  function load(k, fb){ try { var v = JSON.parse(localStorage.getItem(k)); return v === null || v === undefined ? fb : v; } catch(e){ return fb; } }
+  function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+  var bills = load(K.bills, []), pays = load(K.pays, []), accts = load(K.accts, []), snaps = load(K.snaps, []), txs = load(K.tx, []);
+  var bankSnaps = load(K.bankSnaps, []), catOv = load(K.catOv, {}), payeeRules = load(K.payeeRules, {});
+  var suggDis = load(K.suggDis, {}), reviewSkip = load(K.reviewSkip, {});
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  // ---------- seeded bills (added by Claude at user's request) ----------
+  if (!load('fd_seed_rent', false)) {
+    bills.push({ id: uid(), name: 'Rent (Rose Taylor)', amount: 2850, dueDay: 1, category: 'Housing', autopay: false,
+                 matchMode: 'sum', matchWords: 'rose taylor' });
+    save(K.bills, bills); save('fd_seed_rent', true);
+  }
+  if (!load('fd_seed_chaseauto', false)) {
+    bills.push({ id: uid(), name: 'Chase Auto Loan', amount: 762.44, dueDay: 1, category: 'Auto', autopay: false });
+    save(K.bills, bills); save('fd_seed_chaseauto', true);
+  }
+  if (!load('fd_seed_nelnet', false)) {
+    var nelnetId = uid();
+    accts.push({ id: nelnetId, name: 'Federal Student Loans (Nelnet)', type: 'loan' });
+    snaps.push({ accountId: nelnetId, date: '2026-06-26', balance: 124302.33, ts: Date.now() });
+    var eb = bills.filter(function(b){ return /education|nelnet|student/i.test(b.name); })[0];
+    if (eb) {
+      eb.name = 'Student Loans (Nelnet)'; eb.amount = 516.16; eb.dueDay = 18; eb.autopay = true;
+      eb.category = 'Debt'; eb.matchWords = 'department of education nelnet student';
+    } else {
+      bills.push({ id: uid(), name: 'Student Loans (Nelnet)', amount: 516.16, dueDay: 18, category: 'Debt',
+                   autopay: true, matchWords: 'department of education nelnet student' });
+    }
+    save(K.accts, accts); save(K.snaps, snaps); save(K.bills, bills); save('fd_seed_nelnet', true);
+  }
+  if (!load('fd_seed_autoloans', false)) {
+    var fordId = uid(), teslaId = uid();
+    accts.push({ id: fordId, name: '2024 Ford Bronco Sport Loan (Educ Sys FCU)', type: 'loan' });
+    snaps.push({ accountId: fordId, date: todayISO(), balance: 21000, ts: Date.now() });
+    accts.push({ id: teslaId, name: '2023 Tesla Model Y Loan (Chase Auto)', type: 'loan' });
+    snaps.push({ accountId: teslaId, date: todayISO(), balance: 29402.93, ts: Date.now() });
+    var fb = bills.filter(function(b){ return /educ sys/i.test(b.name); })[0];
+    if (fb) { fb.name = 'Ford Bronco Sport Payment'; fb.matchWords = 'educ sys fcu'; fb.category = 'Auto'; }
+    else bills.push({ id: uid(), name: 'Ford Bronco Sport Payment', amount: 503.69, dueDay: 22, category: 'Auto',
+                      autopay: false, matchWords: 'educ sys fcu' });
+    var cb = bills.filter(function(b){ return /chase auto/i.test(b.name); })[0];
+    if (cb) { cb.name = 'Tesla Model Y Payment (Chase Auto)'; cb.matchWords = 'chase auto finance caf'; }
+    save(K.accts, accts); save(K.snaps, snaps); save(K.bills, bills); save('fd_seed_autoloans', true);
+  }
+  if (!load('fd_seed_vehicles', false)) {
+    var v1 = uid(), v2 = uid();
+    accts.push({ id: v1, name: '2024 Ford Bronco Sport (est. market value)', type: 'property' });
+    snaps.push({ accountId: v1, date: todayISO(), balance: 24000, ts: Date.now() });
+    accts.push({ id: v2, name: '2023 Tesla Model Y (est. market value)', type: 'property' });
+    snaps.push({ accountId: v2, date: todayISO(), balance: 28000, ts: Date.now() });
+    save(K.accts, accts); save(K.snaps, snaps); save('fd_seed_vehicles', true);
+  }
+  if (!load('fd_seed_monthlies', false)) {
+    var seedBill = function(name, amount, dueDay, category, matchWords, varAmount, autopay){
+      var w = normWords(name + ' ' + matchWords);
+      var exists = bills.some(function(b){
+        var bw = normWords(b.name + ' ' + (b.matchWords || ''));
+        return bw.some(function(x){ return w.indexOf(x) !== -1; });
+      });
+      if (exists) return;
+      bills.push({ id: uid(), name: name, amount: amount, dueDay: dueDay, category: category,
+                   autopay: !!autopay, matchWords: matchWords, varAmount: !!varAmount });
+    };
+    seedBill('BGE (Baltimore Gas & Electric)', 450, 6, 'Utilities', 'baltimore electric bge', true, false);
+    seedBill('Verizon', 105.29, 10, 'Utilities', 'verizon', false, true);
+    seedBill('T-Mobile', 541.03, 5, 'Utilities', 't-mobile', true, true);
+    seedBill('Geico Insurance', 62.99, 17, 'Insurance', 'geico', true, true);
+    seedBill('Housecleaning (Lucia)', 140, 7, 'Housing', 'lucia granados', false, false);
+    seedBill('Coinbase One', 29.99, 10, 'Subscriptions', 'coinbase', false, true);
+    seedBill('Bark.us', 20, 22, 'Subscriptions', 'bark', false, true);
+    seedBill('Washington Post', 12.72, 11, 'Subscriptions', 'washington post', false, true);
+    seedBill('YouTube TV', 76.31, 19, 'Subscriptions', 'youtube', false, true);
+    seedBill('Google Workspace (business)', 81.58, 1, 'Other', 'google workspace', false, true);
+    seedBill('DoorDash DashPass', 9.99, 6, 'Subscriptions', 'dashpass doordashdashpass', false, true);
+    seedBill('Spokeo', 14.95, 22, 'Subscriptions', 'spokeo', false, true);
+    save(K.bills, bills); save('fd_seed_monthlies', true);
+  }
+  if (!load('fd_fix_geico', false)) {
+    var gb = bills.filter(function(b){ return /geico/i.test(b.name); })[0];
+    if (gb) { gb.amount = 373.13; gb.varAmount = true; save(K.bills, bills); }
+    save('fd_fix_geico', true);
+  }
+  if (!load('fd_seed_timeshare', false)) {
+    if (!bills.some(function(b){ return /marriott|timeshare/i.test(b.name); })) {
+      bills.push({ id: uid(), name: 'Timeshare Payment (Marriott MVC)', amount: 646, dueDay: 11, category: 'Debt',
+                   autopay: true, matchWords: 'marriott mvc vacation club', varAmount: true });
+    }
+    if (!bills.some(function(b){ return /dues/i.test(b.name); })) {
+      bills.push({ id: uid(), name: 'Timeshare Dues ($3,009/yr amortized)', amount: 250.75, dueDay: 28, category: 'Other',
+                   autopay: false, planned: true, matchWords: 'xnomatchx' });
+    }
+    save(K.bills, bills); save('fd_seed_timeshare', true);
+  }
+  if (!load('fd_seed_bizincome', false)) {
+    if (load('fd_biz_income', null) === null) save('fd_biz_income', 2500);
+    save('fd_seed_bizincome', true);
+  }
+  if (!load('fd_seed_health', false)) {
+    if (!bills.some(function(b){ return /hone/i.test(b.name); })) {
+      bills.push({ id: uid(), name: 'Hone Health (TRT)', amount: 289, dueDay: 5, category: 'Other',
+                   autopay: true, matchMode: 'sum', matchWords: 'hone health', varAmount: true });
+    }
+    if (!bills.some(function(b){ return /plushcare/i.test(b.name); })) {
+      bills.push({ id: uid(), name: 'Plushcare membership', amount: 19.99, dueDay: 2, category: 'Subscriptions',
+                   autopay: true, matchWords: 'plushcare' });
+    }
+    if (!bills.some(function(b){ return /zepbound/i.test(b.name); })) {
+      bills.push({ id: uid(), name: 'Zepbound (weight loss)', amount: 300, dueDay: 15, category: 'Other',
+                   autopay: false, planned: true, matchWords: 'zepbound lilly' });
+    }
+    save(K.bills, bills); save('fd_seed_health', true);
+  }
+  if (!load('fd_seed_budgets', false)) {
+    var bg = load('fd_budgets', {});
+    if (bg['Groceries'] === undefined) bg['Groceries'] = 1100;
+    if (bg['Food & Dining'] === undefined) bg['Food & Dining'] = 500;
+    save('fd_budgets', bg); save('fd_seed_budgets', true);
+  }
+  if (!load('fd_seed_budgets2', false)) {
+    var bg2 = load('fd_budgets', {});
+    if (bg2['Entertainment'] === undefined) bg2['Entertainment'] = 200;
+    if (bg2['Shopping'] === undefined) bg2['Shopping'] = 800;
+    save('fd_budgets', bg2); save('fd_seed_budgets2', true);
+  }
+
+  // ---------- helpers ----------
+  var LIAB = { credit:1, loan:1 };
+  var fmt = new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' });
+  function money(n){ return fmt.format(n || 0); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+  function todayISO(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function mkey(y, m){ return y + '-' + String(m+1).padStart(2,'0'); }
+  function monthLabel(y, m){ return new Date(y, m, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' }); }
+  function dueDateFor(bill, y, m){
+    var last = new Date(y, m+1, 0).getDate();
+    return new Date(y, m, Math.min(bill.dueDay, last));
+  }
+  function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+  function niceDate(iso){
+    var p = iso.split('-');
+    return new Date(+p[0], +p[1]-1, +p[2]).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  var now = new Date();
+  var TODAY = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var billView = { y: now.getFullYear(), m: now.getMonth() };
+  var spView = { y: now.getFullYear(), m: now.getMonth() };
+
+  // ---------- categories ----------
+  var CATS = ['Housing & Rent','Food & Dining','Groceries','Shopping','Household','Bills & Utilities','Subscriptions','Gas & Auto','Transport & Parking','Travel','Health','Pets','Entertainment','Business','Taxes','Debt Payments','Investing','Transfers','Income','Other'];
+  var MIGRATE = { 'Dining':'Food & Dining', 'Transport':'Transport & Parking', 'Bills':'Bills & Utilities', 'PayPal':'Other' };
+  function migCat(c){ return MIGRATE[c] || c; }
+  var CATRULES = [
+    [/rose taylor|rent payment|landlord|property management|apartment/i,'Housing & Rent'],
+    [/giant food|weis|safeway|instacart|wegmans|aldi|lidl|food lion|harris teeter|grocery|whole foods|trader joe|commissary|forte meade/i,'Groceries'],
+    [/dunkin|baskin|chick.?fil.?a|starbucks|taco bell|rise up coffee|mcdonald|chipotle|wendy|panera|pizza|grubhub|doordash|uber eats|cafe|coffee|restaurant|bakery|deli|grill|five guys|subway|popeyes|kfc|ihop|denny|founding farmers|carpaccio|fat boys|federal house|keratsini|black market baker|the all american|crab house|tavern|brewhouse|steakhouse|winery|kitchen/i,'Food & Dining'],
+    [/home depot|lowe'?s|wayfair|ikea|bed bath|ace hardware|container store|cleaning|maid service|homegoods|homestead gardens|tractor supply/i,'Household'],
+    [/t.?mobile|verizon|at&t|comcast|xfinity|spectrum|bge|pepco|dominion energy|electric bill|water bill|gas company|internet bill|insurance|geico|state farm|allstate|usaa/i,'Bills & Utilities'],
+    [/bark subscription|netflix|spotify|hulu|disney|icloud|google (one|storage)|prime video|audible|patreon|adobe|dropbox|washington post|youtube tv|dashpass|spokeo|mcafee|premium|subscription|\bfico\b/i,'Subscriptions'],
+    [/supercharger|tesla|wawa|7.?eleven|royal farms|shell|exxon|sunoco|chevron|circle k|autozone|jiffy lube|car wash|motor vehicle|\bdmv\b|tires|tire shop/i,'Gas & Auto'],
+    [/metro|garage|parking|uber(?! eats)|lyft|toll|ez.?pass|amtrak|marc train|department of transportation|mdot/i,'Transport & Parking'],
+    [/amazon|ebay|target|walmart|best buy|costco|etsy|nike|old navy|macy|lego/i,'Shopping'],
+    [/marriott|hotel|airbnb|vrbo|airline|southwest|delta air|united air|expedia|cruise|resort/i,'Travel'],
+    [/petco|petsmart|chewy|animal hospital|veterinar|pet supplies/i,'Pets'],
+    [/plushcare|hone health|cvs|walgreens|pharmacy|dental|doctor|medical|clinic|urgent care|labcorp|quest diag|optical|vision care|counseling|counsel|therapy|vitamin shoppe/i,'Health'],
+    [/movie|cinema|amc theat|regal|steam games|playstation|xbox|nintendo|ticketmaster|stubhub|concert/i,'Entertainment'],
+    [/zenbusiness|ups store|\bups\b|websit|godaddy|squarespace|wix\b|quickbooks|fiverr|upwork|google workspace/i,'Business'],
+    [/\birs\b|tax payment|us treasury|comptroller/i,'Taxes'],
+    [/department of education|educ sys fcu|student loan|navient|nelnet|sallie mae|loan pay|lending|caf direct check|chase auto|self lend|lead bank|klarna|afterpay|affirm|citibank/i,'Debt Payments'],
+    [/acorns|wealthfront|thrift sav|robinhood|fidelity|vanguard|coinbase|performance savings/i,'Investing'],
+    [/venmo|apple pay|zelle|cash app|transfer|withdrawal/i,'Transfers'],
+    [/interest paid|deposit|dfas|defense finance|payroll|direct dep|reimbursement|refund/i,'Income']
+  ];
+  function autoCat(tx){
+    if (catOv[tx.id]) return migCat(catOv[tx.id]);
+    var key = (tx.payee || tx.description || '').toLowerCase().trim();
+    if (payeeRules[key]) return migCat(payeeRules[key]);
+    var hay = (tx.payee || '') + ' ' + (tx.description || '');
+    for (var i = 0; i < CATRULES.length; i++) if (CATRULES[i][0].test(hay)) return CATRULES[i][1];
+    return tx.amount > 0 ? 'Income' : 'Other';
+  }
+
+  // ---------- bank data ----------
+  var BANK = window.FD_BANK; // { fetchedAt:'YYYY-MM-DD', org, accounts:[{id,name,type,balance}], txs:[{id,a,d,m,p,s}] }
+  var bankAccts = [], bankTxs = [];
+  if (BANK) {
+    bankAccts = BANK.accounts.map(function(a){ return { id: a.id, name: a.name, type: a.type, bank: true }; });
+    bankTxs = BANK.txs.map(function(t){
+      return { id: t.id, accountId: t.a, date: t.d, amount: t.m, payee: t.p, description: t.s, bank: true };
+    });
+    // snapshot balances once per sync date
+    var changed = false;
+    BANK.accounts.forEach(function(a){
+      var exists = bankSnaps.some(function(s){ return s.accountId === a.id && s.date === BANK.fetchedAt; });
+      if (!exists) { bankSnaps.push({ accountId: a.id, date: BANK.fetchedAt, balance: a.balance, ts: Date.now() }); changed = true; }
+    });
+    if (changed) save(K.bankSnaps, bankSnaps);
+  }
+  function allAccounts(){ return accts.concat(bankAccts); }
+  function allSnaps(){ return snaps.concat(bankSnaps); }
+
+  // ---------- auto-match bill payments from bank transactions ----------
+  function normWords(s){ return (s || '').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){ return w.length >= 4; }); }
+  function findBankMatch(bill, y, m){
+    var due = dueDateFor(bill, y, m);
+    var words = normWords(bill.name + ' ' + (bill.matchWords || ''));
+    if (!words.length) return null;
+    for (var i = 0; i < bankTxs.length; i++) {
+      var t = bankTxs[i];
+      if (t.amount >= 0) continue;
+      var p = t.date.split('-');
+      var td = new Date(+p[0], +p[1]-1, +p[2]);
+      if (Math.abs(daysBetween(td, due)) > 14) continue;
+      var amt = -t.amount;
+      if (!bill.varAmount && Math.abs(amt - bill.amount) > Math.max(1, bill.amount * 0.03)) continue;
+      var hay = ((t.payee || '') + ' ' + (t.description || '')).toLowerCase();
+      var hit = words.some(function(w){ return hay.indexOf(w) !== -1; });
+      if (hit) return t;
+    }
+    return null;
+  }
+  function findSumMatch(bill, y, m){
+    var key = mkey(y, m), sum = 0, lastDate = null;
+    bankTxs.forEach(function(t){
+      if (t.amount >= 0 || t.date.slice(0,7) !== key) return;
+      var hay = ((t.payee || '') + ' ' + (t.description || '')).toLowerCase();
+      if (hay.indexOf(bill.matchWords) === -1) return;
+      sum += -t.amount;
+      if (!lastDate || t.date > lastDate) lastDate = t.date;
+    });
+    if (sum >= bill.amount * 0.9) return { date: lastDate, amount: Math.round(sum * 100) / 100 };
+    return null;
+  }
+  function autoMarkFromBank(){
+    if (!bankTxs.length || !bills.length) return;
+    var changed = false;
+    var months = [-2, -1, 0].map(function(off){
+      var d = new Date(now.getFullYear(), now.getMonth() + off, 1);
+      return [d.getFullYear(), d.getMonth()];
+    });
+    bills.forEach(function(b){
+      months.forEach(function(ym){
+        var key = mkey(ym[0], ym[1]);
+        if (paymentFor(b.id, key)) return;
+        if (b.matchMode === 'sum' && b.matchWords) {
+          var r = findSumMatch(b, ym[0], ym[1]);
+          if (r) { pays.push({ id: uid(), billId: b.id, forMonth: key, date: r.date, amount: r.amount, source: 'bank' }); changed = true; }
+          return;
+        }
+        var t = findBankMatch(b, ym[0], ym[1]);
+        if (!t) return;
+        if (pays.some(function(pp){ return pp.txId === t.id; })) return;
+        pays.push({ id: uid(), billId: b.id, forMonth: key, date: t.date, amount: -t.amount, source: 'bank', txId: t.id });
+        changed = true;
+      });
+    });
+    if (changed) save(K.pays, pays);
+  }
+
+  function paymentFor(billId, key){
+    for (var i = 0; i < pays.length; i++) if (pays[i].billId === billId && pays[i].forMonth === key) return pays[i];
+    return null;
+  }
+  function billStatus(bill, y, m){
+    var key = mkey(y, m), due = dueDateFor(bill, y, m), p = paymentFor(bill.id, key);
+    if (p) return { cls:'paid', label:'Paid ' + niceDate(p.date) + (p.source === 'bank' ? ' &#10003;' : ''), paid:true, due:due, pay:p };
+    if (bill.planned) return { cls:'upcoming', label:'Planned set-aside', paid:false, due:due };
+    var d = daysBetween(TODAY, due);
+    if (d < 0) return { cls:'overdue', label: (-d) + 'd overdue', paid:false, due:due };
+    if (d === 0) return { cls:'soon', label:'Due today', paid:false, due:due };
+    if (d <= 5) return { cls:'soon', label:'Due in ' + d + 'd', paid:false, due:due };
+    return { cls:'upcoming', label:'Due in ' + d + 'd', paid:false, due:due };
+  }
+  function latestBalance(acctId, atISO){
+    var best = null, list = allSnaps();
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      if (s.accountId !== acctId) continue;
+      if (atISO && s.date > atISO) continue;
+      if (!best || s.date > best.date || (s.date === best.date && s.ts > best.ts)) best = s;
+    }
+    return best;
+  }
+  function netWorthAt(atISO){
+    var assets = 0, liabs = 0;
+    allAccounts().forEach(function(a){
+      var s = latestBalance(a.id, atISO);
+      if (!s) return;
+      if (LIAB[a.type]) liabs += s.balance; else assets += s.balance;
+    });
+    return { assets: assets, liabs: liabs, net: assets - liabs };
+  }
+
+  // combined spending transactions for a month key
+  function monthTransactions(key){
+    var out = [];
+    txs.forEach(function(t){ if (t.date.slice(0,7) === key) out.push({ id: t.id, date: t.date, description: t.description, payee: t.description, amount: -t.amount, category: t.category, manual: true }); });
+    bankTxs.forEach(function(t){ if (t.date.slice(0,7) === key) out.push({ id: t.id, date: t.date, description: t.description || t.payee, payee: t.payee, amount: t.amount, category: autoCat(t), bank: true }); });
+    out.sort(function(a,b){ return b.date < a.date ? -1 : 1; });
+    return out;
+  }
+  var EXCLUDE_FROM_SPEND = { Transfers:1, Investing:1, Income:1 };
+  function monthSpendTotal(key){
+    var s = 0;
+    monthTransactions(key).forEach(function(t){
+      if (t.amount < 0 && !EXCLUDE_FROM_SPEND[t.category]) s += -t.amount;
+    });
+    return s;
+  }
+
+  // ---------- tabs ----------
+  var charts = {};
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      document.querySelectorAll('.view').forEach(function(v){ v.style.display = 'none'; });
+      document.getElementById('view-' + t.dataset.tab).style.display = '';
+      if (t.dataset.tab === 'spending') renderSpending();
+      if (t.dataset.tab === 'networth') renderNetWorth();
+      if (t.dataset.tab === 'cashflow') renderCashflow();
+      if (t.dataset.tab === 'business') renderBusiness();
+    });
+  });
+
+  // ---------- overview ----------
+  function renderOverview(){
+    var key = mkey(now.getFullYear(), now.getMonth());
+    var dueSoon = [], dueSoonTotal = 0, paidCount = 0, unpaidCount = 0;
+    bills.forEach(function(b){
+      var st = billStatus(b, now.getFullYear(), now.getMonth());
+      if (st.paid) paidCount++; else unpaidCount++;
+      [[now.getFullYear(), now.getMonth()], [now.getMonth() === 11 ? now.getFullYear()+1 : now.getFullYear(), (now.getMonth()+1) % 12]].forEach(function(ym){
+        var s = billStatus(b, ym[0], ym[1]);
+        var d = daysBetween(TODAY, s.due);
+        if (!s.paid && d >= -31 && d <= 14) { dueSoon.push({ bill:b, st:s, days:d }); dueSoonTotal += b.amount; }
+      });
+    });
+    dueSoon.sort(function(a,b){ return a.st.due - b.st.due; });
+
+    var monthSpend = monthSpendTotal(key);
+    var nw = netWorthAt(null);
+    var savings = 0;
+    allAccounts().forEach(function(a){
+      if (a.type === 'savings' || a.type === 'investment') { var s = latestBalance(a.id, null); if (s) savings += s.balance; }
+    });
+
+    document.getElementById('ovCards').innerHTML =
+      card('Due in next 14 days', money(dueSoonTotal), dueSoon.length + ' bill' + (dueSoon.length === 1 ? '' : 's')) +
+      card('Bills this month', paidCount + ' / ' + (paidCount + unpaidCount) + ' paid', unpaidCount + ' remaining') +
+      card('Spending this month', money(monthSpend), 'excludes transfers &amp; investing') +
+      card('Net worth', money(nw.net), 'Savings &amp; investments: ' + money(savings));
+
+    var up = document.getElementById('ovUpcoming');
+    if (!dueSoon.length) {
+      up.innerHTML = '<div class="empty">' + (bills.length ? 'Nothing due in the next two weeks.' : 'No bills yet &mdash; add some in the Bills tab.') + '</div>';
+    } else {
+      up.innerHTML = '<table><tr><th>Bill</th><th class="num">Amount</th><th>Due</th><th>Status</th><th></th></tr>' +
+        dueSoon.map(function(x){
+          var dkey = mkey(x.st.due.getFullYear(), x.st.due.getMonth());
+          return '<tr><td>' + esc(x.bill.name) + '</td><td class="num">' + money(x.bill.amount) + '</td><td>' +
+            x.st.due.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + '</td><td><span class="chip ' + x.st.cls + '">' + x.st.label + '</span></td>' +
+            '<td class="num"><button class="small" data-payquick="' + x.bill.id + '|' + dkey + '">Mark paid</button></td></tr>';
+        }).join('') + '</table>';
+    }
+    up.querySelectorAll('[data-payquick]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.dataset.payquick.split('|');
+        markPaid(parts[0], parts[1]);
+      });
+    });
+
+    renderOvAccounts();
+
+    var recent = pays.slice().sort(function(a,b){ return b.date < a.date ? -1 : 1; }).slice(0, 6);
+    document.getElementById('ovRecentPaid').innerHTML = recent.length
+      ? '<table><tr><th>Bill</th><th class="num">Amount</th><th>Paid on</th><th></th></tr>' + recent.map(function(p){
+          var b = bills.filter(function(x){ return x.id === p.billId; })[0];
+          return '<tr><td>' + esc(b ? b.name : '(deleted bill)') + '</td><td class="num">' + money(p.amount) + '</td><td>' + niceDate(p.date) + '</td>' +
+            '<td>' + (p.source === 'bank' ? '<span class="chip bank">auto-detected</span>' : '') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">No payments recorded yet.</div>';
+  }
+  function card(label, value, hint){
+    return '<div class="card"><div class="label">' + label + '</div><div class="value">' + value + '</div>' + (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+  }
+
+  // ---------- bills ----------
+  function markPaid(billId, key){
+    var b = bills.filter(function(x){ return x.id === billId; })[0];
+    if (!b) return;
+    pays.push({ id: uid(), billId: billId, forMonth: key, date: todayISO(), amount: b.amount });
+    save(K.pays, pays); renderAll();
+  }
+  function renderBills(){
+    var y = billView.y, m = billView.m, key = mkey(y, m);
+    document.getElementById('billMonthLabel').textContent = monthLabel(y, m);
+    var el = document.getElementById('billTable');
+    if (!bills.length) { el.innerHTML = '<div class="empty">No bills yet. Add your recurring bills below.</div>'; }
+    else {
+      var rows = bills.slice().sort(function(a,b){ return a.dueDay - b.dueDay; }).map(function(b){
+        var st = billStatus(b, y, m);
+        var p = paymentFor(b.id, key);
+        return '<tr><td>' + esc(b.name) + (b.autopay ? ' <span class="chip upcoming" style="font-size:10px">autopay</span>' : '') + '</td>' +
+          '<td>' + esc(b.category) + '</td>' +
+          '<td class="num">' + money(b.amount) + '</td>' +
+          '<td>' + st.due.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + '</td>' +
+          '<td><span class="chip ' + st.cls + '">' + st.label + '</span></td>' +
+          '<td class="num">' + (p
+            ? '<button class="small" data-unpay="' + p.id + '">Undo</button>'
+            : '<button class="small primary" data-pay="' + b.id + '">Mark paid</button>') +
+            ' <button class="small danger" data-delbill="' + b.id + '">&#10005;</button></td></tr>';
+      }).join('');
+      var total = bills.reduce(function(s,b){ return s + b.amount; }, 0);
+      var paidTotal = bills.reduce(function(s,b){ return s + (paymentFor(b.id, key) ? b.amount : 0); }, 0);
+      el.innerHTML = '<table><tr><th>Bill</th><th>Category</th><th class="num">Amount</th><th>Due</th><th>Status</th><th></th></tr>' + rows +
+        '<tr><td style="font-weight:650">Total</td><td></td><td class="num" style="font-weight:650">' + money(total) + '</td><td colspan="3" style="color:var(--muted)">' + money(paidTotal) + ' paid &middot; ' + money(total - paidTotal) + ' remaining</td></tr></table>';
+    }
+    el.querySelectorAll('[data-pay]').forEach(function(btn){ btn.addEventListener('click', function(){ markPaid(btn.dataset.pay, key); }); });
+    el.querySelectorAll('[data-unpay]').forEach(function(btn){ btn.addEventListener('click', function(){
+      pays = pays.filter(function(p){ return p.id !== btn.dataset.unpay; }); save(K.pays, pays); renderAll();
+    }); });
+    el.querySelectorAll('[data-delbill]').forEach(function(btn){ btn.addEventListener('click', function(){
+      if (!confirm('Delete this bill? Its payment history stays.')) return;
+      bills = bills.filter(function(b){ return b.id !== btn.dataset.delbill; }); save(K.bills, bills); renderAll();
+    }); });
+
+    var hist = pays.slice().sort(function(a,b){ return b.date < a.date ? -1 : 1; }).slice(0, 25);
+    document.getElementById('payHistory').innerHTML = hist.length
+      ? '<table><tr><th>Bill</th><th>For month</th><th class="num">Amount</th><th>Paid on</th><th>Source</th></tr>' + hist.map(function(p){
+          var b = bills.filter(function(x){ return x.id === p.billId; })[0];
+          return '<tr><td>' + esc(b ? b.name : '(deleted bill)') + '</td><td>' + p.forMonth + '</td><td class="num">' + money(p.amount) + '</td><td>' + niceDate(p.date) + '</td>' +
+            '<td>' + (p.source === 'bank' ? '<span class="chip bank">bank</span>' : 'manual') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">No payments recorded yet.</div>';
+  }
+  document.getElementById('billPrev').addEventListener('click', function(){ billView.m--; if (billView.m < 0){ billView.m = 11; billView.y--; } renderBills(); });
+  document.getElementById('billNext').addEventListener('click', function(){ billView.m++; if (billView.m > 11){ billView.m = 0; billView.y++; } renderBills(); });
+  document.getElementById('bAdd').addEventListener('click', function(){
+    var name = document.getElementById('bName').value.trim();
+    var amount = parseFloat(document.getElementById('bAmount').value);
+    var day = parseInt(document.getElementById('bDay').value, 10);
+    if (!name || !(amount > 0) || !(day >= 1 && day <= 31)) { alert('Please fill in name, amount, and a due day between 1 and 31.'); return; }
+    bills.push({ id: uid(), name: name, amount: amount, dueDay: day, category: document.getElementById('bCat').value, autopay: document.getElementById('bAuto').value === 'yes' });
+    save(K.bills, bills);
+    document.getElementById('bName').value = ''; document.getElementById('bAmount').value = '';
+    autoMarkFromBank();
+    renderAll();
+  });
+
+  // ---------- spending ----------
+  function renderSpending(){
+    var key = mkey(spView.y, spView.m);
+    document.getElementById('spMonthLabel').textContent = monthLabel(spView.y, spView.m);
+    var monthTx = monthTransactions(key);
+
+    var byCat = {};
+    monthTx.forEach(function(t){
+      if (t.amount < 0 && !EXCLUDE_FROM_SPEND[t.category]) byCat[t.category] = (byCat[t.category] || 0) + (-t.amount);
+    });
+    var cats = Object.keys(byCat).sort(function(a,b){ return byCat[b] - byCat[a]; });
+
+    if (charts.sp) { charts.sp.destroy(); charts.sp = null; }
+    var canvas = document.getElementById('spChart');
+    if (cats.length) {
+      charts.sp = new Chart(canvas, {
+        type: 'doughnut',
+        data: { labels: cats, datasets: [{ data: cats.map(function(c){ return byCat[c]; }),
+          backgroundColor: ['#b3541e','#1a5f9e','#2e7d32','#b26a00','#6d4c9f','#00796b','#c62828','#5d4037','#455a64','#8d6e63','#7cb342','#f06292'] }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+      });
+    } else {
+      var ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    var inflow = 0, outflow = 0;
+    monthTx.forEach(function(t){ if (t.amount > 0) inflow += t.amount; else if (!EXCLUDE_FROM_SPEND[t.category]) outflow += -t.amount; });
+
+    var el = document.getElementById('txTable');
+    var catOpts = function(sel){ return CATS.map(function(c){ return '<option' + (c === sel ? ' selected' : '') + '>' + c + '</option>'; }).join(''); };
+    el.innerHTML = monthTx.length
+      ? '<div style="color:var(--muted); font-size:12px; margin-bottom:8px">' + money(outflow) + ' spent &middot; ' + money(inflow) + ' received &middot; ' + monthTx.length + ' transactions</div>' +
+        '<table><tr><th>Date</th><th>Description</th><th>Category</th><th class="num">Amount</th><th></th></tr>' + monthTx.map(function(t){
+          var amt = t.amount > 0 ? '<span class="pos">+' + money(t.amount) + '</span>' : money(-t.amount);
+          var catCell = t.bank
+            ? '<select class="catsel" data-recat="' + t.id + '">' + catOpts(t.category) + '</select>'
+            : esc(t.category);
+          return '<tr><td>' + niceDate(t.date) + '</td><td>' + esc(t.payee || t.description) + (t.manual ? ' <span class="chip upcoming" style="font-size:10px">manual</span>' : '') + '</td>' +
+            '<td>' + catCell + '</td><td class="num">' + amt + '</td>' +
+            '<td class="num">' + (t.manual ? '<button class="small danger" data-deltx="' + t.id + '">&#10005;</button>' : '') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">No transactions for this month.</div>';
+    el.querySelectorAll('[data-deltx]').forEach(function(btn){ btn.addEventListener('click', function(){
+      txs = txs.filter(function(t){ return t.id !== btn.dataset.deltx; }); save(K.tx, txs); renderSpending(); renderOverview();
+    }); });
+    el.querySelectorAll('[data-recat]').forEach(function(sel){ sel.addEventListener('change', function(){
+      var id = sel.dataset.recat, cat = sel.value;
+      catOv[id] = cat; save(K.catOv, catOv);
+      var t = bankTxs.filter(function(x){ return x.id === id; })[0];
+      if (t) { var pk = (t.payee || t.description || '').toLowerCase().trim(); if (pk) { payeeRules[pk] = cat; save(K.payeeRules, payeeRules); } }
+      renderSpending(); renderOverview();
+    }); });
+    renderReview();
+    renderBudgets();
+  }
+  document.getElementById('spPrev').addEventListener('click', function(){ spView.m--; if (spView.m < 0){ spView.m = 11; spView.y--; } renderSpending(); });
+  document.getElementById('spNext').addEventListener('click', function(){ spView.m++; if (spView.m > 11){ spView.m = 0; spView.y++; } renderSpending(); });
+  document.getElementById('tDate').value = todayISO();
+  document.getElementById('tCat').innerHTML = CATS.filter(function(c){ return c !== 'Income'; }).map(function(c){ return '<option>' + c + '</option>'; }).join('');
+  document.getElementById('tAdd').addEventListener('click', function(){
+    var desc = document.getElementById('tDesc').value.trim();
+    var amount = parseFloat(document.getElementById('tAmount').value);
+    var date = document.getElementById('tDate').value;
+    if (!desc || !(amount > 0) || !date) { alert('Please fill in description, amount, and date.'); return; }
+    txs.push({ id: uid(), description: desc, amount: amount, date: date, category: document.getElementById('tCat').value });
+    save(K.tx, txs);
+    document.getElementById('tDesc').value = ''; document.getElementById('tAmount').value = '';
+    renderSpending(); renderOverview();
+  });
+
+  // ---------- net worth ----------
+  function renderNetWorth(){
+    var nw = netWorthAt(null);
+    document.getElementById('nwCards').innerHTML =
+      card('Net worth', money(nw.net), '') +
+      card('Total assets', '<span class="pos">' + money(nw.assets) + '</span>', '') +
+      card('Total liabilities', '<span class="neg">' + money(nw.liabs) + '</span>', '');
+
+    var dates = [];
+    allSnaps().forEach(function(s){ if (dates.indexOf(s.date) === -1) dates.push(s.date); });
+    dates.sort();
+    var series = dates.map(function(d){ return netWorthAt(d).net; });
+
+    if (charts.nw) { charts.nw.destroy(); charts.nw = null; }
+    var canvas = document.getElementById('nwChart');
+    if (dates.length) {
+      charts.nw = new Chart(canvas, {
+        type: 'line',
+        data: { labels: dates.map(niceDate), datasets: [{ label: 'Net worth', data: series, borderColor: '#b3541e', backgroundColor: 'rgba(179,84,30,0.08)', fill: true, tension: 0.25, pointRadius: 3 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { y: { ticks: { callback: function(v){ return '$' + Number(v).toLocaleString(); } } } } }
+      });
+    }
+
+    var typeLabels = { checking:'Checking', savings:'Savings', investment:'Investment', property:'Property/Asset', credit:'Credit card', loan:'Loan/Mortgage' };
+    var el = document.getElementById('acctTable');
+    var list = allAccounts();
+    el.innerHTML = list.length
+      ? '<table><tr><th>Account</th><th>Type</th><th class="num">Balance</th><th>Last updated</th><th></th></tr>' + list.map(function(a){
+          var s = latestBalance(a.id, null);
+          var bal = s ? s.balance : 0;
+          var sign = LIAB[a.type] ? '<span class="neg">-' + money(bal).replace('-','') + '</span>' : money(bal);
+          return '<tr><td>' + esc(a.name) + (a.bank ? ' <span class="chip bank">synced</span>' : '') + '</td><td>' + (typeLabels[a.type] || a.type) + '</td><td class="num">' + sign + '</td>' +
+            '<td>' + (s ? niceDate(s.date) : '&mdash;') + '</td>' +
+            '<td class="num">' + (a.bank ? '' : '<button class="small" data-upbal="' + a.id + '">Update balance</button> <button class="small danger" data-delacct="' + a.id + '">&#10005;</button>') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">No accounts yet. Add your accounts below to start tracking net worth.</div>';
+    el.querySelectorAll('[data-upbal]').forEach(function(btn){ btn.addEventListener('click', function(){
+      var a = accts.filter(function(x){ return x.id === btn.dataset.upbal; })[0];
+      var v = prompt('New balance for ' + a.name + ' (enter liabilities as positive numbers):');
+      if (v === null) return;
+      var n = parseFloat(v);
+      if (isNaN(n)) { alert('Not a number.'); return; }
+      snaps.push({ accountId: a.id, date: todayISO(), balance: n, ts: Date.now() });
+      save(K.snaps, snaps); renderNetWorth(); renderOverview();
+    }); });
+    el.querySelectorAll('[data-delacct]').forEach(function(btn){ btn.addEventListener('click', function(){
+      if (!confirm('Delete this account and its balance history?')) return;
+      accts = accts.filter(function(a){ return a.id !== btn.dataset.delacct; });
+      snaps = snaps.filter(function(s){ return s.accountId !== btn.dataset.delacct; });
+      save(K.accts, accts); save(K.snaps, snaps); renderNetWorth(); renderOverview();
+    }); });
+  }
+  document.getElementById('aAdd').addEventListener('click', function(){
+    var name = document.getElementById('aName').value.trim();
+    var bal = parseFloat(document.getElementById('aBal').value);
+    if (!name || isNaN(bal)) { alert('Please fill in a name and starting balance.'); return; }
+    var id = uid();
+    accts.push({ id: id, name: name, type: document.getElementById('aType').value });
+    snaps.push({ accountId: id, date: todayISO(), balance: bal, ts: Date.now() });
+    save(K.accts, accts); save(K.snaps, snaps);
+    document.getElementById('aName').value = ''; document.getElementById('aBal').value = '';
+    renderNetWorth(); renderOverview();
+  });
+
+  // ---------- recurring bill detection ----------
+  function median(arr){ var a = arr.slice().sort(function(x,y){ return x - y; }); var m = Math.floor(a.length / 2); return a.length % 2 ? a[m] : (a[m-1] + a[m]) / 2; }
+  function detectRecurring(){
+    var groups = {};
+    bankTxs.forEach(function(t){
+      if (t.amount >= 0) return;
+      var k = (t.payee || t.description || '').toLowerCase().trim();
+      if (!k) return;
+      k = k + '||' + Math.round(-t.amount);
+      (groups[k] = groups[k] || []).push(t);
+    });
+    var out = [];
+    Object.keys(groups).forEach(function(k){
+      if (suggDis[k]) return;
+      var list = groups[k].slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+      if (list.length < 2) return;
+      var amts = list.map(function(t){ return -t.amount; });
+      var med = median(amts);
+      if (med < 5) return;
+      if (!amts.every(function(a){ return Math.abs(a - med) <= Math.max(1, med * 0.15); })) return;
+      var days = list.map(function(t){ var p = t.date.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); });
+      var gaps = [];
+      for (var i = 1; i < days.length; i++) gaps.push(daysBetween(days[i-1], days[i]));
+      var mg = median(gaps);
+      if (!(mg >= 25 && mg <= 36)) return;
+      if (!gaps.every(function(g){ return Math.abs(g - mg) <= 6; })) return;
+      // skip if a similar bill already exists
+      var kw = normWords(k);
+      var dup = bills.some(function(b){
+        var bw = normWords(b.name + ' ' + (b.matchWords || ''));
+        return bw.some(function(w){ return kw.indexOf(w) !== -1; });
+      });
+      if (dup) return;
+      var last = list[list.length - 1];
+      var cat = autoCat(last);
+      out.push({ key: k, name: last.payee || last.description, amount: Math.round(med * 100) / 100,
+                 dueDay: Math.round(median(list.map(function(t){ return +t.date.split('-')[2]; }))),
+                 n: list.length, lastDate: last.date, cat: (cat === 'Other' ? 'Other' : cat) });
+    });
+    out.sort(function(a,b){ return b.amount - a.amount; });
+    return out;
+  }
+  var billCatMap = { 'Housing & Rent':'Housing', 'Bills & Utilities':'Utilities', 'Subscriptions':'Subscriptions', 'Debt Payments':'Debt', 'Investing':'Other', 'Gas & Auto':'Auto', 'Taxes':'Other', 'Business':'Other' };
+  function renderSuggestions(){
+    var wrap = document.getElementById('suggWrap');
+    var sugg = detectRecurring();
+    if (!sugg.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    document.getElementById('suggTable').innerHTML =
+      '<table><tr><th>Payee</th><th class="num">Amount</th><th>Around day</th><th>Seen</th><th>Last charged</th><th></th></tr>' +
+      sugg.map(function(s, i){
+        return '<tr><td>' + esc(s.name) + '</td><td class="num">~' + money(s.amount) + '</td><td>' + s.dueDay + getDaySuffix(s.dueDay) + '</td>' +
+          '<td>' + s.n + '&times;</td><td>' + niceDate(s.lastDate) + '</td>' +
+          '<td class="num"><button class="small primary" data-sadd="' + i + '">Add bill</button> <button class="small" data-sdis="' + i + '">Dismiss</button></td></tr>';
+      }).join('') + '</table>';
+    var el = document.getElementById('suggTable');
+    el.querySelectorAll('[data-sadd]').forEach(function(btn){ btn.addEventListener('click', function(){
+      var s = sugg[+btn.dataset.sadd];
+      bills.push({ id: uid(), name: s.name, amount: s.amount, dueDay: Math.min(Math.max(s.dueDay, 1), 31), category: billCatMap[s.cat] || 'Other', autopay: false });
+      suggDis[s.key] = 1;
+      save(K.bills, bills); save(K.suggDis, suggDis);
+      autoMarkFromBank(); renderAll();
+    }); });
+    el.querySelectorAll('[data-sdis]').forEach(function(btn){ btn.addEventListener('click', function(){
+      var s = sugg[+btn.dataset.sdis];
+      suggDis[s.key] = 1; save(K.suggDis, suggDis);
+      renderSuggestions();
+    }); });
+  }
+  function getDaySuffix(d){ if (d >= 11 && d <= 13) return 'th'; return { 1:'st', 2:'nd', 3:'rd' }[d % 10] || 'th'; }
+
+  // ---------- category review queue ----------
+  function reviewGroups(){
+    var g = {};
+    bankTxs.forEach(function(t){
+      if (t.amount >= 0) return;
+      if (autoCat(t) !== 'Other') return;
+      var k = (t.payee || t.description || '').toLowerCase().trim() || '(no payee)';
+      if (reviewSkip[k]) return;
+      var e = g[k] = g[k] || { key: k, name: t.payee || t.description, count: 0, total: 0, last: '' };
+      e.count++; e.total += -t.amount;
+      if (t.date > e.last) e.last = t.date;
+    });
+    return Object.keys(g).map(function(k){ return g[k]; }).sort(function(a,b){ return b.total - a.total; }).slice(0, 15);
+  }
+  function renderReview(){
+    var wrap = document.getElementById('reviewWrap');
+    var groups = reviewGroups();
+    if (!groups.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    document.getElementById('reviewHead').textContent = 'Needs review \u2014 how should these be categorized? (' + groups.length + ' payees)';
+    var opts = '<option value="">Choose category\u2026</option>' + CATS.filter(function(c){ return c !== 'Income' && c !== 'Other'; }).map(function(c){ return '<option>' + c + '</option>'; }).join('');
+    document.getElementById('reviewTable').innerHTML =
+      '<table><tr><th>Payee</th><th>Charges</th><th class="num">Total (90d)</th><th>Last seen</th><th>Category</th><th></th></tr>' +
+      groups.map(function(gr, i){
+        return '<tr><td>' + esc(gr.name) + '</td><td>' + gr.count + '&times;</td><td class="num">' + money(gr.total) + '</td><td>' + niceDate(gr.last) + '</td>' +
+          '<td><select class="catsel" data-rvcat="' + i + '">' + opts + '</select></td>' +
+          '<td class="num"><button class="small" data-rvskip="' + i + '">Ignore</button></td></tr>';
+      }).join('') + '</table>';
+    var el = document.getElementById('reviewTable');
+    el.querySelectorAll('[data-rvcat]').forEach(function(sel){ sel.addEventListener('change', function(){
+      if (!sel.value) return;
+      var gr = groups[+sel.dataset.rvcat];
+      payeeRules[gr.key] = sel.value; save(K.payeeRules, payeeRules);
+      renderSpending(); renderOverview();
+    }); });
+    el.querySelectorAll('[data-rvskip]').forEach(function(btn){ btn.addEventListener('click', function(){
+      var gr = groups[+btn.dataset.rvskip];
+      reviewSkip[gr.key] = 1; save(K.reviewSkip, reviewSkip);
+      renderReview();
+    }); });
+  }
+
+  // ---------- cash flow projection ----------
+  function detectIncomeStreams(){
+    var g = {};
+    bankTxs.forEach(function(t){
+      if (t.amount <= 0 || autoCat(t) !== 'Income') return;
+      var k = (t.payee || t.description || '').toLowerCase().trim();
+      if (!k) return;
+      (g[k] = g[k] || []).push(t);
+    });
+    var out = [];
+    Object.keys(g).forEach(function(k){
+      var list = g[k].slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+      if (list.length < 3) return;
+      var amts = list.map(function(t){ return t.amount; });
+      var med = median(amts);
+      if (med < 20) return;
+      if (!amts.every(function(a){ return Math.abs(a - med) <= Math.max(10, med * 0.25); })) return;
+      var days = list.map(function(t){ var p = t.date.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); });
+      var gaps = [];
+      for (var i = 1; i < days.length; i++){ var gp = daysBetween(days[i-1], days[i]); if (gp > 0) gaps.push(gp); }
+      if (!gaps.length) return;
+      var mg = median(gaps);
+      if (!((mg >= 11 && mg <= 18) || (mg >= 25 && mg <= 36))) return;
+      out.push({ name: list[list.length-1].payee || list[list.length-1].description, amount: med, gap: mg, last: days[days.length-1] });
+    });
+    return out;
+  }
+  function projectedIncomeEvents(){
+    var events = [], horizon = new Date(TODAY.getTime() + 30 * 86400000);
+    detectIncomeStreams().forEach(function(s){
+      var d = new Date(s.last.getTime());
+      for (var i = 0; i < 6; i++) {
+        d = new Date(d.getTime() + s.gap * 86400000);
+        if (d > horizon) break;
+        if (d >= TODAY) events.push({ date: d, name: s.name, amount: s.amount, kind: 'in' });
+      }
+    });
+    return events;
+  }
+  function upcomingBillEvents(){
+    var events = [], horizon = new Date(TODAY.getTime() + 30 * 86400000);
+    bills.forEach(function(b){
+      [[TODAY.getFullYear(), TODAY.getMonth()], [TODAY.getMonth() === 11 ? TODAY.getFullYear()+1 : TODAY.getFullYear(), (TODAY.getMonth()+1) % 12]].forEach(function(ym){
+        var due = dueDateFor(b, ym[0], ym[1]);
+        if (due < TODAY || due > horizon) return;
+        var p = paymentFor(b.id, mkey(ym[0], ym[1]));
+        events.push({ date: due, name: b.name + (b.autopay ? ' (autopay)' : ''), amount: -b.amount, kind: 'out', paid: !!p });
+      });
+    });
+    return events;
+  }
+  function fullMonthKeys(n){
+    var keys = [];
+    for (var i = 1; i <= n; i++) {
+      var d = new Date(TODAY.getFullYear(), TODAY.getMonth() - i, 1);
+      keys.push(mkey(d.getFullYear(), d.getMonth()));
+    }
+    return keys;
+  }
+  var BILL_COVERED = { 'Housing & Rent':1, 'Bills & Utilities':1, 'Debt Payments':1, 'Subscriptions':1, 'Taxes':1 };
+  function billWordSets(){
+    return bills.map(function(b){ return normWords(b.matchWords ? b.matchWords : b.name); })
+                .filter(function(w){ return w.length; });
+  }
+  function isBillTx(t, sets){
+    var hay = ((t.payee || '') + ' ' + (t.description || '')).toLowerCase();
+    for (var i = 0; i < sets.length; i++) {
+      if (sets[i].some(function(w){ return hay.indexOf(w) !== -1; })) return true;
+    }
+    return false;
+  }
+  function variableDetail(){
+    var budgets = load('fd_budgets', {});
+    var sets = billWordSets();
+    var keys = fullMonthKeys(2);
+    var perCat = {};
+    keys.forEach(function(key){
+      monthTransactions(key).forEach(function(t){
+        if (t.amount >= 0) return;
+        var c = t.category;
+        if (EXCLUDE_FROM_SPEND[c] || BILL_COVERED[c]) return;
+        if (isBillTx(t, sets)) return;
+        perCat[c] = perCat[c] || {};
+        perCat[c][key] = (perCat[c][key] || 0) + (-t.amount);
+      });
+    });
+    var cats = {};
+    Object.keys(perCat).forEach(function(c){ cats[c] = 1; });
+    Object.keys(budgets).forEach(function(c){ if (!EXCLUDE_FROM_SPEND[c] && !BILL_COVERED[c]) cats[c] = 1; });
+    var detail = Object.keys(cats).map(function(c){
+      var hist = keys.map(function(k){ return (perCat[c] || {})[k] || 0; });
+      var avg = median(hist);
+      var hasBudget = budgets[c] !== undefined;
+      return { cat: c, avg: avg, est: hasBudget ? budgets[c] : avg, src: hasBudget ? 'budget' : 'avg' };
+    });
+    detail.sort(function(a,b){ return b.est - a.est; });
+    return detail;
+  }
+  function investingMonthly(){
+    var sets = billWordSets();
+    var vals = fullMonthKeys(2).map(function(key){
+      var s = 0;
+      monthTransactions(key).forEach(function(t){
+        if (t.amount < 0 && t.category === 'Investing' && !isBillTx(t, sets)) s += -t.amount;
+      });
+      return s;
+    });
+    return vals.length ? median(vals) : 0;
+  }
+  function renderCashflow(){
+    var incomeEvents = projectedIncomeEvents();
+    var autoIncome = incomeEvents.reduce(function(s,e){ return s + e.amount; }, 0);
+    var ov = load('fd_income_override', null);
+    var biz = load('fd_biz_income', 0) || 0;
+    var income = (ov && ov > 0) ? ov : autoIncome + biz;
+    var billEvents = upcomingBillEvents();
+    var billsDue = billEvents.reduce(function(s,e){ return s + (e.paid ? 0 : -e.amount); }, 0);
+    var varDetail = variableDetail();
+    var varSpend = varDetail.reduce(function(s,d){ return s + d.est; }, 0);
+    var invest = investingMonthly();
+    var disposable = income - billsDue - varSpend - invest;
+
+    document.getElementById('cfCards').innerHTML =
+      card('Projected income (30d)', '<span class="pos">' + money(income) + '</span>', (ov && ov > 0) ? 'manual override' : incomeEvents.length + ' expected deposits' + (biz > 0 ? ' + ' + money(biz) + ' business' : '')) +
+      card('Bills due (30d)', money(billsDue), billEvents.filter(function(e){ return !e.paid; }).length + ' bills') +
+      card('Expected variable spending', money(varSpend), 'typical month, non-bill') +
+      card('Typical investing', money(invest), 'Acorns &amp; other recurring') +
+      card('Projected disposable', '<span class="' + (disposable >= 0 ? 'pos' : 'neg') + '">' + money(disposable) + '</span>', 'income &minus; bills &minus; spending &minus; investing');
+
+    var events = incomeEvents.concat(billEvents).sort(function(a,b){ return a.date - b.date; });
+    document.getElementById('cfSchedule').innerHTML = events.length
+      ? '<table><tr><th>Date</th><th>Item</th><th class="num">Amount</th><th></th></tr>' + events.map(function(e){
+          var amt = e.kind === 'in' ? '<span class="pos">+' + money(e.amount) + '</span>' : money(e.amount);
+          return '<tr><td>' + e.date.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + '</td><td>' + esc(e.name) + '</td>' +
+            '<td class="num">' + amt + '</td><td>' + (e.paid ? '<span class="chip paid">already paid</span>' : '') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">Nothing detected in the next 30 days.</div>';
+
+    document.getElementById('cfVarTable').innerHTML = varDetail.length
+      ? '<table><tr><th>Category</th><th class="num">Recent avg / month</th><th class="num">Expected</th><th>Based on</th></tr>' + varDetail.map(function(d){
+          return '<tr><td>' + esc(d.cat) + '</td><td class="num">' + money(d.avg) + '</td><td class="num">' + money(d.est) + '</td>' +
+            '<td>' + (d.src === 'budget' ? '<span class="chip paid">your budget</span>' : '<span class="chip upcoming">recent average</span>') + '</td></tr>';
+        }).join('') +
+        '<tr><td style="font-weight:650">Total expected variable</td><td></td><td class="num" style="font-weight:650">' + money(varSpend) + '</td><td></td></tr></table>'
+      : '<div class="empty">No variable spending history yet.</div>';
+
+    document.getElementById('cfNotes').innerHTML =
+      'Income: recurring deposits detected in your bank history (e.g. DFAS pay roughly every 2 weeks), projected forward 30 days.' +
+      '<br>Bills: every bill\u2019s next due date in the window; already-paid ones are excluded from the total.' +
+      '<br>Variable spending: category-by-category \u2014 your budget where you set one, otherwise the recent monthly average, with bill payments excluded. See the line-by-line table above.' +
+      '<br>Investing: median monthly recurring investment outflow (Acorns etc.).' +
+      '<br>Business income (TechD Enterprises) is included as a flat monthly amount until the Truist account is linked \u2014 then real deposits take over.' +
+      '<br>One-off income (FSA reimbursements, refunds, transfers) is not projected \u2014 real disposable income may be higher.';
+
+    var ovInput = document.getElementById('cfIncomeOv');
+    if (ov && ov > 0) ovInput.value = ov; else { ovInput.value = ''; ovInput.placeholder = 'auto: ' + Math.round(autoIncome + biz); }
+    document.getElementById('cfBizInc').value = biz || '';
+  }
+  document.getElementById('cfIncomeSave').addEventListener('click', function(){
+    var b = parseFloat(document.getElementById('cfBizInc').value);
+    save('fd_biz_income', (b > 0) ? b : 0);
+    var v = parseFloat(document.getElementById('cfIncomeOv').value);
+    if (v > 0) save('fd_income_override', v); else localStorage.removeItem('fd_income_override');
+    renderCashflow();
+  });
+  document.getElementById('cfIncomeClear').addEventListener('click', function(){
+    localStorage.removeItem('fd_income_override'); renderCashflow();
+  });
+
+  // ---------- business ----------
+  function renderBusiness(){
+    var rows = [];
+    bankTxs.forEach(function(t){
+      var hay = (t.payee || '') + ' ' + (t.description || '');
+      var isIncome = t.amount > 0 && /techd/i.test(hay);
+      var isExp = t.amount < 0 && autoCat(t) === 'Business';
+      if (isIncome || isExp) rows.push(t);
+    });
+    rows.sort(function(a,b){ return b.date < a.date ? -1 : 1; });
+    var key = mkey(now.getFullYear(), now.getMonth());
+    var inM = 0, outM = 0, in90 = 0, out90 = 0;
+    rows.forEach(function(t){
+      if (t.amount > 0) { in90 += t.amount; if (t.date.slice(0,7) === key) inM += t.amount; }
+      else { out90 += -t.amount; if (t.date.slice(0,7) === key) outM += -t.amount; }
+    });
+    var planned = load('fd_biz_income', 0) || 0;
+    document.getElementById('bizCards').innerHTML =
+      card('Income received (this month)', '<span class="pos">' + money(inM) + '</span>', 'expected: ' + money(planned) + '/mo') +
+      card('Business expenses (this month)', money(outM), '') +
+      card('Net (this month)', money(inM - outM), '') +
+      card('Last 90 days', '<span class="pos">+' + money(in90) + '</span> / <span class="neg">-' + money(out90) + '</span>', 'net ' + money(in90 - out90));
+    document.getElementById('bizTable').innerHTML = rows.length
+      ? '<table><tr><th>Date</th><th>Item</th><th class="num">Amount</th></tr>' + rows.map(function(t){
+          var amt = t.amount > 0 ? '<span class="pos">+' + money(t.amount) + '</span>' : money(t.amount);
+          return '<tr><td>' + niceDate(t.date) + '</td><td>' + esc(t.payee || t.description) + '</td><td class="num">' + amt + '</td></tr>';
+        }).join('') + '</table>'
+      : '<div class="empty">No business transactions detected yet.</div>';
+  }
+
+  // ---------- budgets ----------
+  function renderBudgets(){
+    var budgets = load('fd_budgets', {});
+    var key = mkey(spView.y, spView.m);
+    var spent = {};
+    monthTransactions(key).forEach(function(t){
+      if (t.amount < 0) spent[t.category] = (spent[t.category] || 0) + (-t.amount);
+    });
+    var cats = Object.keys(budgets);
+    document.getElementById('budgetBars').innerHTML = cats.length
+      ? cats.map(function(c){
+          var b = budgets[c], s = spent[c] || 0, pct = b > 0 ? Math.min(100, s / b * 100) : 0;
+          var color = s > b ? 'var(--red)' : (s >= b * 0.8 ? 'var(--amber)' : 'var(--green)');
+          return '<div style="margin-bottom:10px">' +
+            '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px"><span>' + esc(c) +
+            ' <button class="small danger" style="border:none; padding:0 4px" data-bgdel="' + esc(c) + '">&#10005;</button></span><span>' +
+            money(s) + ' of ' + money(b) + (s > b ? ' &mdash; <span class="neg">over by ' + money(s - b) + '</span>' : '') + '</span></div>' +
+            '<div style="background:var(--border); border-radius:6px; height:8px"><div style="width:' + pct.toFixed(0) + '%; background:' + color + '; height:8px; border-radius:6px"></div></div></div>';
+        }).join('')
+      : '<div class="empty">No budgets set.</div>';
+    document.getElementById('budgetBars').querySelectorAll('[data-bgdel]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var bg = load('fd_budgets', {});
+        delete bg[btn.dataset.bgdel]; save('fd_budgets', bg); renderBudgets();
+      });
+    });
+  }
+  document.getElementById('bgCat').innerHTML = CATS.filter(function(c){ return c !== 'Income' && c !== 'Transfers'; }).map(function(c){ return '<option>' + c + '</option>'; }).join('');
+  document.getElementById('bgSet').addEventListener('click', function(){
+    var amt = parseFloat(document.getElementById('bgAmt').value);
+    if (!(amt > 0)) { alert('Enter a monthly budget amount.'); return; }
+    var bg = load('fd_budgets', {});
+    bg[document.getElementById('bgCat').value] = amt;
+    save('fd_budgets', bg);
+    document.getElementById('bgAmt').value = '';
+    renderBudgets();
+  });
+
+  // ---------- overview account summary ----------
+  function renderOvAccounts(){
+    var groups = [
+      { label: 'Cash', types: { checking:1, savings:1 } },
+      { label: 'Investments & Retirement', types: { investment:1 } },
+      { label: 'Property & Vehicles', types: { property:1 } },
+      { label: 'Loans & Cards', types: { credit:1, loan:1 } }
+    ];
+    var out = '<table><tr><th>Account</th><th class="num">Balance</th><th>Updated</th></tr>';
+    var grand = 0;
+    groups.forEach(function(g){
+      var list = allAccounts().filter(function(a){ return g.types[a.type]; });
+      if (!list.length) return;
+      var sub = 0;
+      var rows = list.map(function(a){
+        var s = latestBalance(a.id, null);
+        var bal = s ? s.balance : 0;
+        var liab = LIAB[a.type];
+        sub += liab ? -bal : bal;
+        var val = liab ? '<span class="neg">-' + money(bal) + '</span>' : money(bal);
+        return '<tr><td style="padding-left:18px">' + esc(a.name) + (a.bank ? ' <span class="chip bank">synced</span>' : '') + '</td>' +
+          '<td class="num">' + val + '</td><td>' + (s ? niceDate(s.date) : '&mdash;') + '</td></tr>';
+      }).join('');
+      grand += sub;
+      out += '<tr><td style="font-weight:650">' + g.label + '</td><td class="num" style="font-weight:650">' +
+        (sub < 0 ? '<span class="neg">' + money(sub) + '</span>' : money(sub)) + '</td><td></td></tr>' + rows;
+    });
+    out += '<tr><td style="font-weight:650; border-top:2px solid var(--border)">Net worth</td><td class="num" style="font-weight:650; border-top:2px solid var(--border)">' +
+      (grand < 0 ? '<span class="neg">' + money(grand) + '</span>' : money(grand)) + '</td><td style="border-top:2px solid var(--border)"></td></tr></table>';
+    document.getElementById('ovAccounts').innerHTML = out;
+  }
+
+  // ---------- boot ----------
+  function renderAll(){ renderOverview(); renderBills(); renderSuggestions(); }
+  var syncMsg = BANK
+    ? BANK.org + ' &middot; ' + BANK.accounts.length + ' accounts &middot; ' + BANK.txs.length + ' transactions synced ' + niceDate(BANK.fetchedAt) + '. Ask Claude to sync again for fresh data.'
+    : 'Bank sync not connected yet. Ask Claude to connect SimpleFIN.';
+  document.getElementById('syncBanner').innerHTML = syncMsg;
+  document.getElementById('subTitle').innerHTML = 'Bills, spending, and net worth &middot; ' + TODAY.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }) +
+    (BANK ? ' &middot; bank data as of ' + niceDate(BANK.fetchedAt) : '');
+  autoMarkFromBank();
+  renderAll();
+})();
+</script>
+</body>
+</html>
