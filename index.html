@@ -688,15 +688,17 @@ window.FD_LIVE_READY.then(function(){
     [/amazon|ebay|target|walmart|best buy|costco|etsy|nike|old navy|macy|lego/i,'Shopping'],
     [/marriott|hotel|airbnb|vrbo|airline|southwest|delta air|united air|expedia|cruise|resort/i,'Travel'],
     [/petco|petsmart|chewy|animal hospital|veterinar|pet supplies/i,'Pets'],
-    [/plushcare|hone health|cvs|walgreens|pharmacy|dental|doctor|medical|clinic|urgent care|labcorp|quest diag|optical|vision care|counseling|counsel|therapy|vitamin shoppe/i,'Health'],
+    [/plushcare|hone health|cvs|walgreens|pharmacy|dental|doctor|medical|clinic|urgent care|labcorp|quest diag|optical|vision care|counseling|counsel|\bcouns\b|therapy|vitamin shoppe/i,'Health'],
     [/movie|cinema|amc theat|regal|steam games|playstation|xbox|nintendo|ticketmaster|stubhub|concert/i,'Entertainment'],
-    [/zenbusiness|ups store|\bups\b|websit|godaddy|squarespace|wix\b|quickbooks|fiverr|upwork|google workspace/i,'Business'],
+    [/base44|zenbusiness|ups store|\bups\b|websit|godaddy|squarespace|wix\b|quickbooks|fiverr|upwork|google workspace/i,'Business'],
     [/\birs\b|tax payment|us treasury|comptroller/i,'Taxes'],
     [/department of education|educ sys fcu|student loan|navient|nelnet|sallie mae|loan pay|lending|caf direct check|chase auto|self lend|lead bank|klarna|afterpay|affirm|citibank/i,'Debt Payments'],
     [/acorns|wealthfront|thrift sav|robinhood|fidelity|vanguard|coinbase|performance savings/i,'Investing'],
     [/venmo|apple pay|zelle|cash app|transfer|withdrawal/i,'Transfers'],
     [/interest paid|deposit|dfas|defense finance|payroll|direct dep|reimbursement|refund/i,'Income']
   ];
+  var KIDS_RE = /child parent couns/i;
+  function isKids(t){ return KIDS_RE.test((t.payee || '') + ' ' + (t.description || '')); }
   function autoCat(tx){
     if (catOv[tx.id]) return migCat(catOv[tx.id]);
     var key = (tx.payee || tx.description || '').toLowerCase().trim();
@@ -1004,17 +1006,19 @@ window.FD_LIVE_READY.then(function(){
 
     var inflow = 0, outflow = 0;
     monthTx.forEach(function(t){ if (t.amount > 0) inflow += t.amount; else if (!EXCLUDE_FROM_SPEND[t.category]) outflow += -t.amount; });
+    var kidsOut = 0;
+    monthTx.forEach(function(t){ if (t.amount < 0 && isKids(t)) kidsOut += -t.amount; });
 
     var el = document.getElementById('txTable');
     var catOpts = function(sel){ return CATS.map(function(c){ return '<option' + (c === sel ? ' selected' : '') + '>' + c + '</option>'; }).join(''); };
     el.innerHTML = monthTx.length
-      ? '<div style="color:var(--muted); font-size:12px; margin-bottom:8px">' + money(outflow) + ' spent &middot; ' + money(inflow) + ' received &middot; ' + monthTx.length + ' transactions</div>' +
+      ? '<div style="color:var(--muted); font-size:12px; margin-bottom:8px">' + money(outflow) + ' spent &middot; ' + money(inflow) + ' received &middot; ' + monthTx.length + ' transactions' + (kidsOut > 0 ? ' &middot; ' + money(kidsOut) + ' kids expenses' : '') + '</div>' +
         '<table><tr><th>Date</th><th>Description</th><th>Category</th><th class="num">Amount</th><th></th></tr>' + monthTx.map(function(t){
           var amt = t.amount > 0 ? '<span class="pos">+' + money(t.amount) + '</span>' : money(-t.amount);
           var catCell = t.bank
             ? '<select class="catsel" data-recat="' + t.id + '">' + catOpts(t.category) + '</select>'
             : esc(t.category);
-          return '<tr><td>' + niceDate(t.date) + '</td><td>' + esc(t.payee || t.description) + (t.manual ? ' <span class="chip upcoming" style="font-size:10px">manual</span>' : '') + '</td>' +
+          return '<tr><td>' + niceDate(t.date) + '</td><td>' + esc(t.payee || t.description) + (t.manual ? ' <span class="chip upcoming" style="font-size:10px">manual</span>' : '') + (isKids(t) ? ' <span class="chip paid" style="font-size:10px">kids</span>' : '') + '</td>' +
             '<td>' + catCell + '</td><td class="num">' + amt + '</td>' +
             '<td class="num">' + (t.manual ? '<button class="small danger" data-deltx="' + t.id + '">&#10005;</button>' : '') + '</td></tr>';
         }).join('') + '</table>'
