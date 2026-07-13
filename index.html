@@ -2435,6 +2435,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }catch(e){document.getElementById('fd-auth-error').textContent='Auth error — try again.';}
   };
   window.fdSignOut=function(){sessionStorage.removeItem(KEY);location.reload();};
+  if(!/github\.io$/.test(location.hostname)){show('local');return;}
   try{
     var d=JSON.parse(sessionStorage.getItem(KEY)||'null');
     if(d&&ALLOWED.indexOf(d.email)!==-1&&Date.now()-d.ts<TTL){show(d.name||d.email);}
