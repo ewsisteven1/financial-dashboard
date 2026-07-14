@@ -983,13 +983,34 @@ window.FD_LIVE_READY.then(function(){
     h += row('NET MONTHLY', money(net), {strong:1, color: net >= 0 ? 'var(--green)' : 'var(--red)'});
     h += '</table>';
     el.innerHTML = h;
-    function askNum(msg, cur){
-      var v = prompt(msg, cur != null ? cur : '');
-      if (v === null) return undefined;
-      if (v === '') return null;
-      var n = parseFloat(v);
-      if (isNaN(n) || n < 0){ alert('Enter a positive number'); return undefined; }
-      return n;
+    function inlineEdit(btn, cur, cb){
+      var td = btn.parentElement;
+      td.innerHTML = '';
+      var inp = document.createElement('input');
+      inp.type = 'number'; inp.step = '0.01'; inp.min = '0'; inp.placeholder = 'auto';
+      if (cur != null) inp.value = cur;
+      inp.style.cssText = 'width:100px;padding:2px 6px;font-size:12px';
+      var ok = document.createElement('button'); ok.className = 'small'; ok.textContent = '\u2713'; ok.title = 'Save';
+      var no = document.createElement('button'); no.className = 'small'; no.textContent = '\u2715'; no.title = 'Cancel';
+      td.appendChild(inp); td.appendChild(document.createTextNode(' ')); td.appendChild(ok); td.appendChild(no);
+      inp.focus();
+      function done(saveIt){
+        if (saveIt){
+          var v = (inp.value || '').trim();
+          if (v === ''){ cb(null); return; }
+          var n = parseFloat(v);
+          if (isNaN(n) || n < 0){ inp.style.border = '1px solid var(--red)'; return; }
+          cb(n);
+        } else { renderSummary(); }
+      }
+      ok.addEventListener('click', function(ev){ ev.stopPropagation(); done(true); });
+      no.addEventListener('click', function(ev){ ev.stopPropagation(); done(false); });
+      inp.addEventListener('click', function(ev){ ev.stopPropagation(); });
+      inp.addEventListener('keydown', function(ev){
+        ev.stopPropagation();
+        if (ev.key === 'Enter') done(true);
+        if (ev.key === 'Escape') done(false);
+      });
     }
     el.querySelectorAll('[data-sumtoggle]').forEach(function(r){
       r.addEventListener('click', function(){ var c = r.dataset.sumtoggle; sumOpen[c] = !sumOpen[c]; renderSummary(); });
@@ -1008,11 +1029,12 @@ window.FD_LIVE_READY.then(function(){
       b.addEventListener('click', function(ev){
         ev.stopPropagation();
         var ov = load('fd_sum_amtov') || {};
-        var n = askNum('Amount to count in the summary (blank = use actual):', ov[b.dataset.sumamt]);
-        if (n === undefined) return;
-        if (n === null) delete ov[b.dataset.sumamt]; else ov[b.dataset.sumamt] = n;
-        save('fd_sum_amtov', ov);
-        renderSummary();
+        var id = b.dataset.sumamt;
+        inlineEdit(b, ov[id], function(n){
+          if (n === null) delete ov[id]; else ov[id] = n;
+          save('fd_sum_amtov', ov);
+          renderSummary();
+        });
       });
     });
     el.querySelectorAll('[data-sumcatov]').forEach(function(b){
@@ -1020,29 +1042,29 @@ window.FD_LIVE_READY.then(function(){
         ev.stopPropagation();
         var ov = load('fd_sum_catov') || {};
         var c = b.dataset.sumcatov;
-        var n = askNum('Monthly total for ' + c + ' (blank = automatic average):', ov[c]);
-        if (n === undefined) return;
-        if (n === null) delete ov[c]; else ov[c] = n;
-        save('fd_sum_catov', ov);
-        renderSummary();
+        inlineEdit(b, ov[c], function(n){
+          if (n === null) delete ov[c]; else ov[c] = n;
+          save('fd_sum_catov', ov);
+          renderSummary();
+        });
       });
     });
     el.querySelectorAll('[data-sumpay]').forEach(function(b){
       b.addEventListener('click', function(ev){
         ev.stopPropagation();
-        var n = askNum('Monthly paycheck total (blank = automatic from DFAS deposits):', (payOv > 0) ? payOv : null);
-        if (n === undefined) return;
-        if (n === null || n === 0) localStorage.removeItem('fd_sum_payov'); else save('fd_sum_payov', n);
-        renderSummary();
+        inlineEdit(b, (payOv > 0) ? payOv : null, function(n){
+          if (n === null || n === 0) localStorage.removeItem('fd_sum_payov'); else save('fd_sum_payov', n);
+          renderSummary();
+        });
       });
     });
     el.querySelectorAll('[data-sumcontract]').forEach(function(b){
       b.addEventListener('click', function(ev){
         ev.stopPropagation();
-        var n = askNum('Monthly contract income (blank = default $2,500):', contract);
-        if (n === undefined) return;
-        save('fd_biz_income', (n === null) ? 0 : n);
-        renderSummary();
+        inlineEdit(b, contract, function(n){
+          save('fd_biz_income', (n === null) ? 0 : n);
+          renderSummary();
+        });
       });
     });
   }
