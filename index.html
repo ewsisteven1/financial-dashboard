@@ -126,6 +126,11 @@
   <div class="view" id="view-overview">
     <div class="cards" id="ovCards"></div>
     <div class="panel">
+      <h2>Monthly Summary</h2>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px">3-month averages from bank history. Assumes 2 paychecks/month; contract income $2,500/month with business expenses deducted from it.</div>
+      <div id="ovSummary"></div>
+    </div>
+    <div class="panel">
       <h2>All accounts</h2>
       <div id="ovAccounts"></div>
     </div>
@@ -891,7 +896,57 @@ window.FD_LIVE_READY.then(function(){
   });
 
   // ---------- overview ----------
+  function renderSummary(){
+    var el = document.getElementById('ovSummary');
+    if (!el) return;
+    var pay = 0, bizExp = 0, savings = 0, byCat = {};
+    bankTxs.forEach(function(t){
+      var hay = (t.payee || '') + ' ' + (t.description || '');
+      var cat = autoCat(t);
+      if (t.amount > 0){
+        if (/dfas|defense fin/i.test(hay)) pay += t.amount;
+        return;
+      }
+      var amt = -t.amount;
+      if (cat === 'Business'){ bizExp += amt; return; }
+      if (cat === 'Investing'){ savings += amt; return; }
+      if (cat === 'Transfers' || cat === 'Income') return;
+      byCat[cat] = (byCat[cat] || 0) + amt;
+    });
+    pay /= 3; bizExp /= 3; savings /= 3;
+    var contract = 2500;
+    try { var bi = load('fd_biz_income'); if (bi > 0) contract = bi; } catch(e){}
+    var cats = Object.keys(byCat).sort(function(a,b){ return byCat[b] - byCat[a]; });
+    var personal = 0; cats.forEach(function(c){ byCat[c] /= 3; personal += byCat[c]; });
+    var income = pay + contract;
+    var net = income - bizExp - personal - savings;
+    function row(label, val, opts){
+      opts = opts || {};
+      return '<tr' + (opts.strong ? ' style="font-weight:650"' : '') + '><td' + (opts.indent ? ' style="padding-left:22px;color:var(--muted)"' : '') + '>' + label + '</td>' +
+        '<td class="num"' + (opts.color ? ' style="color:' + opts.color + '"' : '') + '>' + val + '</td></tr>';
+    }
+    var h = '<table>';
+    h += row('INCOME','',{strong:1});
+    h += row('Paychecks (2\u00d7 DFAS)', money(pay), {indent:1});
+    h += row('Contract (TechD via Truist)', money(contract), {indent:1});
+    h += row('Total income', money(income), {strong:1});
+    h += row('&nbsp;','');
+    h += row('BUSINESS','',{strong:1});
+    h += row('Business expenses', '\u2212' + money(bizExp), {indent:1});
+    h += row('Net contract income', money(contract - bizExp), {strong:1, color: (contract - bizExp) >= 0 ? 'var(--green)' : 'var(--red)'});
+    h += row('&nbsp;','');
+    h += row('PERSONAL EXPENSES BY TYPE','',{strong:1});
+    cats.forEach(function(c){ h += row(esc(c), '\u2212' + money(byCat[c]), {indent:1}); });
+    h += row('Total personal expenses', '\u2212' + money(personal), {strong:1});
+    h += row('&nbsp;','');
+    h += row('Savings / Investing', '\u2212' + money(savings), {strong:1});
+    h += row('&nbsp;','');
+    h += row('NET MONTHLY', money(net), {strong:1, color: net >= 0 ? 'var(--green)' : 'var(--red)'});
+    h += '</table>';
+    el.innerHTML = h;
+  }
   function renderOverview(){
+    renderSummary();
     var key = mkey(now.getFullYear(), now.getMonth());
     var dueSoon = [], dueSoonTotal = 0, paidCount = 0, unpaidCount = 0;
     bills.forEach(function(b){
