@@ -896,33 +896,37 @@ window.FD_LIVE_READY.then(function(){
   });
 
   // ---------- overview ----------
+  var sumOpen = {};
   function renderSummary(){
     var el = document.getElementById('ovSummary');
     if (!el) return;
-    var pay = 0, bizExp = 0, savings = 0, byCat = {};
+    var oneTime = load('fd_sum_onetime') || [];
+    var amtOv = load('fd_sum_amtov') || {};
+    var pay = 0, bizExp = 0, savings = 0, byCat = {}, txByCat = {};
     bankTxs.forEach(function(t){
       var hay = (t.payee || '') + ' ' + (t.description || '');
       var cat = autoCat(t);
-      if (t.amount > 0){
-        if (/dfas|defense fin/i.test(hay)) pay += t.amount;
-        return;
-      }
+      if (t.amount > 0){ if (/dfas|defense fin/i.test(hay)) pay += t.amount; return; }
       var amt = -t.amount;
       if (cat === 'Business'){ bizExp += amt; return; }
       if (cat === 'Investing'){ savings += amt; return; }
       if (cat === 'Transfers' || cat === 'Income') return;
-      byCat[cat] = (byCat[cat] || 0) + amt;
+      var excluded = oneTime.indexOf(t.id) >= 0;
+      var used = (amtOv[t.id] != null) ? parseFloat(amtOv[t.id]) : amt;
+      if (!excluded) byCat[cat] = (byCat[cat] || 0) + used;
+      if (!txByCat[cat]) txByCat[cat] = [];
+      txByCat[cat].push({ id: t.id, date: t.date, label: t.payee || t.description, amt: amt, used: used, excluded: excluded, ov: amtOv[t.id] != null });
     });
     pay /= 3; bizExp /= 3; savings /= 3;
     var contract = 2500;
     try { var bi = load('fd_biz_income'); if (bi > 0) contract = bi; } catch(e){}
-    var cats = Object.keys(byCat).sort(function(a,b){ return byCat[b] - byCat[a]; });
-    var personal = 0; cats.forEach(function(c){ byCat[c] /= 3; personal += byCat[c]; });
+    var cats = Object.keys(txByCat).sort(function(a,b){ return (byCat[b] || 0) - (byCat[a] || 0); });
+    var personal = 0; cats.forEach(function(c){ byCat[c] = (byCat[c] || 0) / 3; personal += byCat[c]; });
     var income = pay + contract;
     var net = income - bizExp - personal - savings;
     function row(label, val, opts){
       opts = opts || {};
-      return '<tr' + (opts.strong ? ' style="font-weight:650"' : '') + '><td' + (opts.indent ? ' style="padding-left:22px;color:var(--muted)"' : '') + '>' + label + '</td>' +
+      return '<tr' + (opts.attr || '') + (opts.strong ? ' style="font-weight:650"' : (opts.attr ? '' : '')) + '><td' + (opts.indent ? ' style="padding-left:22px;color:var(--muted)' + (opts.attr ? ';cursor:pointer' : '') + '"' : '') + '>' + label + '</td>' +
         '<td class="num"' + (opts.color ? ' style="color:' + opts.color + '"' : '') + '>' + val + '</td></tr>';
     }
     var h = '<table>';
@@ -935,8 +939,23 @@ window.FD_LIVE_READY.then(function(){
     h += row('Business expenses', '\u2212' + money(bizExp), {indent:1});
     h += row('Net contract income', money(contract - bizExp), {strong:1, color: (contract - bizExp) >= 0 ? 'var(--green)' : 'var(--red)'});
     h += row('&nbsp;','');
-    h += row('PERSONAL EXPENSES BY TYPE','',{strong:1});
-    cats.forEach(function(c){ h += row(esc(c), '\u2212' + money(byCat[c]), {indent:1}); });
+    h += row('PERSONAL EXPENSES BY TYPE <span style="font-weight:400;font-size:11px;color:var(--muted)">\u2014 click a category to see its transactions</span>','',{strong:1});
+    cats.forEach(function(c){
+      var openC = !!sumOpen[c];
+      var list = txByCat[c].slice().sort(function(a,b){ return b.date < a.date ? -1 : 1; });
+      h += row((openC ? '\u25be ' : '\u25b8 ') + esc(c) + ' <span style="font-size:11px">(' + list.length + ')</span>', '\u2212' + money(byCat[c]), {indent:1, attr:' data-sumtoggle="' + esc(c) + '"'});
+      if (openC){
+        list.forEach(function(t){
+          var amtHtml = (t.excluded ? '<span style="text-decoration:line-through;color:var(--muted)">' + money(t.amt) + '</span>'
+            : money(t.used) + (t.ov ? ' <span style="font-size:10px;color:var(--muted)">(actual ' + money(t.amt) + ')</span>' : ''));
+          h += '<tr><td style="padding-left:40px;font-size:12px;color:var(--muted)">' + niceDate(t.date) + ' \u00b7 ' + esc(t.label) +
+            (t.excluded ? ' <span class="chip upcoming" style="font-size:10px">one-time, excluded</span>' : '') + '</td>' +
+            '<td class="num" style="font-size:12px;white-space:nowrap">' + amtHtml +
+            ' <button class="small" data-sumamt="' + t.id + '" title="Override the amount counted in this summary">\u270e</button>' +
+            ' <button class="small" data-sumone="' + t.id + '" title="One-time charges are excluded from the monthly averages">' + (t.excluded ? 'include' : 'one-time') + '</button></td></tr>';
+        });
+      }
+    });
     h += row('Total personal expenses', '\u2212' + money(personal), {strong:1});
     h += row('&nbsp;','');
     h += row('Savings / Investing', '\u2212' + money(savings), {strong:1});
@@ -944,6 +963,32 @@ window.FD_LIVE_READY.then(function(){
     h += row('NET MONTHLY', money(net), {strong:1, color: net >= 0 ? 'var(--green)' : 'var(--red)'});
     h += '</table>';
     el.innerHTML = h;
+    el.querySelectorAll('[data-sumtoggle]').forEach(function(r){
+      r.addEventListener('click', function(){ var c = r.dataset.sumtoggle; sumOpen[c] = !sumOpen[c]; renderSummary(); });
+    });
+    el.querySelectorAll('[data-sumone]').forEach(function(b){
+      b.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var ig = load('fd_sum_onetime') || [];
+        var i = ig.indexOf(b.dataset.sumone);
+        if (i >= 0) ig.splice(i, 1); else ig.push(b.dataset.sumone);
+        save('fd_sum_onetime', ig);
+        renderSummary();
+      });
+    });
+    el.querySelectorAll('[data-sumamt]').forEach(function(b){
+      b.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var ov = load('fd_sum_amtov') || {};
+        var cur = ov[b.dataset.sumamt];
+        var v = prompt('Amount to count in the summary (blank = use actual):', cur != null ? cur : '');
+        if (v === null) return;
+        if (v === ''){ delete ov[b.dataset.sumamt]; }
+        else { var n = parseFloat(v); if (isNaN(n) || n < 0){ alert('Enter a positive number'); return; } ov[b.dataset.sumamt] = n; }
+        save('fd_sum_amtov', ov);
+        renderSummary();
+      });
+    });
   }
   function renderOverview(){
     renderSummary();
