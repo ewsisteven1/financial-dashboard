@@ -902,37 +902,54 @@ window.FD_LIVE_READY.then(function(){
     if (!el) return;
     var oneTime = load('fd_sum_onetime') || [];
     var amtOv = load('fd_sum_amtov') || {};
+    var catTotOv = load('fd_sum_catov') || {};
+    var payOv = load('fd_sum_payov');
     var pay = 0, bizExp = 0, savings = 0, byCat = {}, txByCat = {};
-    bankTxs.forEach(function(t){
-      var hay = (t.payee || '') + ' ' + (t.description || '');
-      var cat = autoCat(t);
-      if (t.amount > 0){ if (/dfas|defense fin/i.test(hay)) pay += t.amount; return; }
-      var amt = -t.amount;
+    function addExpense(id, date, label, cat, amt, isManual){
       if (cat === 'Business'){ bizExp += amt; return; }
       if (cat === 'Investing'){ savings += amt; return; }
       if (cat === 'Transfers' || cat === 'Income') return;
-      var excluded = oneTime.indexOf(t.id) >= 0;
-      var used = (amtOv[t.id] != null) ? parseFloat(amtOv[t.id]) : amt;
+      var excluded = oneTime.indexOf(id) >= 0;
+      var used = (amtOv[id] != null) ? parseFloat(amtOv[id]) : amt;
       if (!excluded) byCat[cat] = (byCat[cat] || 0) + used;
       if (!txByCat[cat]) txByCat[cat] = [];
-      txByCat[cat].push({ id: t.id, date: t.date, label: t.payee || t.description, amt: amt, used: used, excluded: excluded, ov: amtOv[t.id] != null });
+      txByCat[cat].push({ id: id, date: date, label: label, amt: amt, used: used, excluded: excluded, ov: amtOv[id] != null, manual: !!isManual });
+    }
+    bankTxs.forEach(function(t){
+      var hay = (t.payee || '') + ' ' + (t.description || '');
+      if (t.amount > 0){ if (/dfas|defense fin/i.test(hay)) pay += t.amount; return; }
+      addExpense(t.id, t.date, t.payee || t.description, autoCat(t), -t.amount, false);
     });
-    pay /= 3; bizExp /= 3; savings /= 3;
+    var cutoff = new Date(TODAY.getTime() - 90 * 86400000).toISOString().slice(0, 10);
+    txs.forEach(function(t){
+      if (!t.date || t.date < cutoff) return;
+      var amt = Math.abs(parseFloat(t.amount) || 0);
+      if (!amt) return;
+      addExpense('man-' + (t.id != null ? t.id : t.date + '-' + amt), t.date, t.description, migCat(t.category || 'Other'), amt, true);
+    });
+    var payAuto = pay / 3; bizExp /= 3; savings /= 3;
+    pay = (payOv > 0) ? payOv : payAuto;
     var contract = 2500;
     try { var bi = load('fd_biz_income'); if (bi > 0) contract = bi; } catch(e){}
     var cats = Object.keys(txByCat).sort(function(a,b){ return (byCat[b] || 0) - (byCat[a] || 0); });
-    var personal = 0; cats.forEach(function(c){ byCat[c] = (byCat[c] || 0) / 3; personal += byCat[c]; });
+    var catAuto = {}, personal = 0;
+    cats.forEach(function(c){
+      catAuto[c] = (byCat[c] || 0) / 3;
+      byCat[c] = (catTotOv[c] != null) ? parseFloat(catTotOv[c]) : catAuto[c];
+      personal += byCat[c];
+    });
     var income = pay + contract;
     var net = income - bizExp - personal - savings;
     function row(label, val, opts){
       opts = opts || {};
-      return '<tr' + (opts.attr || '') + (opts.strong ? ' style="font-weight:650"' : (opts.attr ? '' : '')) + '><td' + (opts.indent ? ' style="padding-left:22px;color:var(--muted)' + (opts.attr ? ';cursor:pointer' : '') + '"' : '') + '>' + label + '</td>' +
+      return '<tr' + (opts.attr || '') + (opts.strong ? ' style="font-weight:650"' : '') + '><td' + (opts.indent ? ' style="padding-left:22px;color:var(--muted)' + (opts.attr ? ';cursor:pointer' : '') + '"' : '') + '>' + label + '</td>' +
         '<td class="num"' + (opts.color ? ' style="color:' + opts.color + '"' : '') + '>' + val + '</td></tr>';
     }
+    function pencil(attr, val){ return ' <button class="small" ' + attr + ' title="Enter a manual number (blank = automatic)">\u270e</button>' + (val ? ' <span style="font-size:10px;color:var(--muted)">' + val + '</span>' : ''); }
     var h = '<table>';
     h += row('INCOME','',{strong:1});
-    h += row('Paychecks (2\u00d7 DFAS)', money(pay), {indent:1});
-    h += row('Contract (TechD via Truist)', money(contract), {indent:1});
+    h += row('Paychecks (2\u00d7 DFAS)', money(pay) + pencil('data-sumpay="1"', (payOv > 0) ? '(auto ' + money(payAuto) + ')' : ''), {indent:1});
+    h += row('Contract (TechD via Truist)', money(contract) + pencil('data-sumcontract="1"', ''), {indent:1});
     h += row('Total income', money(income), {strong:1});
     h += row('&nbsp;','');
     h += row('BUSINESS','',{strong:1});
@@ -943,12 +960,15 @@ window.FD_LIVE_READY.then(function(){
     cats.forEach(function(c){
       var openC = !!sumOpen[c];
       var list = txByCat[c].slice().sort(function(a,b){ return b.date < a.date ? -1 : 1; });
-      h += row((openC ? '\u25be ' : '\u25b8 ') + esc(c) + ' <span style="font-size:11px">(' + list.length + ')</span>', '\u2212' + money(byCat[c]), {indent:1, attr:' data-sumtoggle="' + esc(c) + '"'});
+      h += row((openC ? '\u25be ' : '\u25b8 ') + esc(c) + ' <span style="font-size:11px">(' + list.length + ')</span>',
+        '\u2212' + money(byCat[c]) + pencil('data-sumcatov="' + esc(c) + '"', (catTotOv[c] != null) ? '(auto ' + money(catAuto[c]) + ')' : ''),
+        {indent:1, attr:' data-sumtoggle="' + esc(c) + '"'});
       if (openC){
         list.forEach(function(t){
           var amtHtml = (t.excluded ? '<span style="text-decoration:line-through;color:var(--muted)">' + money(t.amt) + '</span>'
             : money(t.used) + (t.ov ? ' <span style="font-size:10px;color:var(--muted)">(actual ' + money(t.amt) + ')</span>' : ''));
           h += '<tr><td style="padding-left:40px;font-size:12px;color:var(--muted)">' + niceDate(t.date) + ' \u00b7 ' + esc(t.label) +
+            (t.manual ? ' <span class="chip upcoming" style="font-size:10px">manual</span>' : '') +
             (t.excluded ? ' <span class="chip upcoming" style="font-size:10px">one-time, excluded</span>' : '') + '</td>' +
             '<td class="num" style="font-size:12px;white-space:nowrap">' + amtHtml +
             ' <button class="small" data-sumamt="' + t.id + '" title="Override the amount counted in this summary">\u270e</button>' +
@@ -963,6 +983,14 @@ window.FD_LIVE_READY.then(function(){
     h += row('NET MONTHLY', money(net), {strong:1, color: net >= 0 ? 'var(--green)' : 'var(--red)'});
     h += '</table>';
     el.innerHTML = h;
+    function askNum(msg, cur){
+      var v = prompt(msg, cur != null ? cur : '');
+      if (v === null) return undefined;
+      if (v === '') return null;
+      var n = parseFloat(v);
+      if (isNaN(n) || n < 0){ alert('Enter a positive number'); return undefined; }
+      return n;
+    }
     el.querySelectorAll('[data-sumtoggle]').forEach(function(r){
       r.addEventListener('click', function(){ var c = r.dataset.sumtoggle; sumOpen[c] = !sumOpen[c]; renderSummary(); });
     });
@@ -980,12 +1008,40 @@ window.FD_LIVE_READY.then(function(){
       b.addEventListener('click', function(ev){
         ev.stopPropagation();
         var ov = load('fd_sum_amtov') || {};
-        var cur = ov[b.dataset.sumamt];
-        var v = prompt('Amount to count in the summary (blank = use actual):', cur != null ? cur : '');
-        if (v === null) return;
-        if (v === ''){ delete ov[b.dataset.sumamt]; }
-        else { var n = parseFloat(v); if (isNaN(n) || n < 0){ alert('Enter a positive number'); return; } ov[b.dataset.sumamt] = n; }
+        var n = askNum('Amount to count in the summary (blank = use actual):', ov[b.dataset.sumamt]);
+        if (n === undefined) return;
+        if (n === null) delete ov[b.dataset.sumamt]; else ov[b.dataset.sumamt] = n;
         save('fd_sum_amtov', ov);
+        renderSummary();
+      });
+    });
+    el.querySelectorAll('[data-sumcatov]').forEach(function(b){
+      b.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var ov = load('fd_sum_catov') || {};
+        var c = b.dataset.sumcatov;
+        var n = askNum('Monthly total for ' + c + ' (blank = automatic average):', ov[c]);
+        if (n === undefined) return;
+        if (n === null) delete ov[c]; else ov[c] = n;
+        save('fd_sum_catov', ov);
+        renderSummary();
+      });
+    });
+    el.querySelectorAll('[data-sumpay]').forEach(function(b){
+      b.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var n = askNum('Monthly paycheck total (blank = automatic from DFAS deposits):', (payOv > 0) ? payOv : null);
+        if (n === undefined) return;
+        if (n === null || n === 0) localStorage.removeItem('fd_sum_payov'); else save('fd_sum_payov', n);
+        renderSummary();
+      });
+    });
+    el.querySelectorAll('[data-sumcontract]').forEach(function(b){
+      b.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var n = askNum('Monthly contract income (blank = default $2,500):', contract);
+        if (n === undefined) return;
+        save('fd_biz_income', (n === null) ? 0 : n);
         renderSummary();
       });
     });
