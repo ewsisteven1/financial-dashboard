@@ -474,9 +474,11 @@ window.FD_LIVE_READY = (function(){
   }
   async function live(){
     banner('Syncing live bank data…', null);
-    var acc = stripHdr(text(await call('mcp__Desktop_Commander__read_file', { path: OUTDIR + '\\simplefin-access.txt' }))).trim();
-    var m = acc.match(/^https:\/\/([^:]+):([^@]+)@(.+)$/);
-    if (!m) throw new Error('bad access url');
+    var accR = await call('mcp__Desktop_Commander__read_file', { path: OUTDIR + '\\simplefin-access.txt' });
+    var accT = text(accR);
+    if (accR && accR.isError) throw new Error('access file: ' + accT.slice(0, 100));
+    var m = accT.match(/https:\/\/([^:\/\s]+):([^@\s]+)@(\S+)/);
+    if (!m) throw new Error('bad access url: ' + accT.slice(0, 80));
     var stamp = Date.now();
     var outFile = OUTDIR + '\\live-' + stamp + '.json';
     var ps = "$ProgressPreference='SilentlyContinue';$ErrorActionPreference='Stop';" +
