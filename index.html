@@ -512,9 +512,35 @@ window.FD_LIVE_READY = (function(){
     banner('Live · synced ' + ('0'+t.getHours()).slice(-2) + ':' + ('0'+t.getMinutes()).slice(-2) +
       (errs.length ? ' · ' + errs.length + ' bank(s) need re-auth' : ''), true);
   }
+  function syncFallback(e){
+    var when = window.FD_BANK ? window.FD_BANK.fetchedAt : '?';
+    var b = document.getElementById('fdLiveBanner');
+    if (!b){ b = document.createElement('div'); b.id = 'fdLiveBanner';
+      b.style.cssText = 'position:fixed;top:8px;right:10px;z-index:9999;font:12px system-ui,sans-serif;padding:4px 10px;border-radius:12px;opacity:.92;';
+      document.body.appendChild(b); }
+    b.style.background = '#444'; b.style.color = '#fff'; b.textContent = '';
+    if (window.cowork && window.cowork.runScheduledTask){
+      b.appendChild(document.createTextNode('Data from ' + when));
+      var btn = document.createElement('button');
+      btn.textContent = 'Sync now';
+      btn.style.cssText = 'margin-left:8px;background:#1e5c3a;color:#fff;border:0;border-radius:8px;padding:2px 10px;font:12px system-ui,sans-serif;cursor:pointer';
+      btn.onclick = function(){
+        btn.disabled = true; btn.textContent = 'Syncing\u2026';
+        Promise.resolve(window.cowork.runScheduledTask('sync-dashboard-now')).then(function(){
+          b.textContent = 'Sync started \u2014 reload this view in a minute or two.';
+        }).catch(function(err){
+          b.style.background = '#7a2c2c';
+          b.textContent = 'Sync failed: ' + ((err && err.message) || err);
+        });
+      };
+      b.appendChild(btn);
+    } else {
+      b.textContent = 'Live sync unavailable here \u2014 data from ' + when;
+    }
+  }
   var timeout = new Promise(function(res){ setTimeout(res, 65000); });
   var attempt = (window.cowork && window.cowork.callMcpTool)
-    ? live().catch(function(e){ banner('Live sync failed (' + (e && e.message || 'error') + ') — showing data from ' + (window.FD_BANK ? window.FD_BANK.fetchedAt : '?'), false); })
+    ? live().catch(function(e){ syncFallback(e); })
     : Promise.resolve();
   return Promise.race([attempt, timeout]);
 })();
